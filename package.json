@@ -1,24 +1,32 @@
 {
   "name": "get-title-at-url",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Retrieves the title of the web page at a given url.",
   "main": "./index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "repository":  { 
-	"type": "git",
-	"url": "https://github.com/m4bwav/get-title-at-url.git"
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/m4bwav/get-title-at-url.git"
   },
   "homepage": "https://github.com/m4bwav/get-title-at-url",
   "author": "Mark Rogers",
-  "keywords": ["html", "url", "title"],
-  "tags": ["html", "url", "title"],
+  "keywords": [
+    "html",
+    "url",
+    "title"
+  ],
+  "tags": [
+    "html",
+    "url",
+    "title"
+  ],
   "license": "MIT",
   "dependencies": {
     "request": "~2.72.0",
     "article-title": "1.0.2",
     "meow": "3.7.0",
-	"is-url": "1.2.1"
+    "is-url": "1.2.1"
   }
 }
