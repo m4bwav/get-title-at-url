@@ -1,7 +1,7 @@
 {
   "name": "get-title-at-url",
   "version": "1.0.0",
-  "description": "Retrieve the title of the web page at url.",
+  "description": "Retrieves the title of the web page at a given url.",
   "main": "./index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -18,6 +18,7 @@
   "dependencies": {
     "request": "~2.72.0",
     "article-title": "1.0.2",
-    "meow": "3.7.0"
+    "meow": "3.7.0",
+	"is-url": "1.2.1"
   }
 }

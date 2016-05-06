@@ -17,7 +17,7 @@ var cli = meow({
 var input = cli.input[0];
 
 function init(url) {
-    var title = getTitleAtUrl(url, function(title){
+    getTitleAtUrl(url, function(title){
 		console.log(title);
 	});
     
