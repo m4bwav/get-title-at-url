@@ -1,6 +1,7 @@
 {
   "name": "get-title-at-url",
   "version": "1.0.2",
+  "bin": "cli.js",
   "description": "Retrieves the title of the web page at a given url.",
   "main": "./index.js",
   "scripts": {
@@ -12,6 +13,10 @@
   },
   "homepage": "https://github.com/m4bwav/get-title-at-url",
   "author": "Mark Rogers",
+  "files": [
+    "index.js",
+    "cli.js"
+  ],
   "keywords": [
     "html",
     "url",
