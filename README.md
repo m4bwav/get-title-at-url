@@ -24,7 +24,7 @@ getTitleAtUrl(url, function(title){
 ## CLI
 
 ```
-$ npm install --global article-title
+$ npm install --global get-title-at-url
 ```
 
 ```
