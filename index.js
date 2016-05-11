@@ -17,13 +17,10 @@ module.exports = function(url, callback){
 	}
 	
     request(url, function (error, response, body) {
-	  if (!error && response.statusCode == 200) {
-		  var title = articleTitle(body)
-		    ;
-			
-			if(callback){
-				callback(title);
-			}
-	  }
+	  var title;
+      if (!error && response.statusCode == 200) {
+	    title = articleTitle(body);
+      }
+	  callback(title);
 	});  
 };
