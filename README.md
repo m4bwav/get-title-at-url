@@ -1,6 +1,7 @@
 # get-title-at-url
 
 [![Dependency Status](https://david-dm.org/m4bwav/get-title-at-url.svg)](https://david-dm.org/m4bwav/get-title-at-url)
+[![Known Vulnerabilities](https://snyk.io/test/npm/get-title-at-url/badge.svg?style=flat-square)](https://snyk.io/test/npm/get-title-at-url)
 
 Npm package to retrieve the title at a given url.  Largely combines articleTitle with request.
 
