@@ -45,7 +45,7 @@
   "xo": {
     "rules": {
       "xo/no-process-exit": "off",
-      "linebreak-style":  ["error", "windows"],
+      "linebreak-style":  "off",
       "indent": ["error", 2]
     }
   }
