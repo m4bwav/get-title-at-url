@@ -2,6 +2,7 @@
 
 [![npm package](https://nodei.co/npm/get-title-at-url.png?downloads=true&downloadRank=true&stars=true)](https://nodei.co/npm/get-title-at-url/)
 
+[![Build Status](https://travis-ci.org/m4bwav/get-title-at-url.svg?branch=master)](https://travis-ci.org/m4bwav/get-title-at-url)
 [![Dependency Status](https://david-dm.org/m4bwav/get-title-at-url.svg)](https://david-dm.org/m4bwav/get-title-at-url)
 [![Known Vulnerabilities](https://snyk.io/test/npm/get-title-at-url/badge.svg?style=flat-square)](https://snyk.io/test/npm/get-title-at-url)
 
