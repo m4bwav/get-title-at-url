@@ -5,7 +5,8 @@
   "description": "Retrieves the title of the web page at a given url.",
   "main": "./index.js",
   "scripts": {
-    "test": "xo && ava"
+    "test": "xo && nyc ava",
+    "coveralls": "nyc report --reporter=text-lcov | coveralls"
   },
   "repository": {
     "type": "git",
@@ -40,6 +41,9 @@
   "devDependencies": {
     "ava": "*",
     "execa": "^0.4.0",
+    "coveralls": "^2.11.9",
+    "codecov.io": "^0.1.6",
+    "nyc": "^6.1.1",
     "xo": "^0.15.0"
   },
   "xo": {
