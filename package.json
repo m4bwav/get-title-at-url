@@ -5,13 +5,16 @@
   "description": "Retrieves the title of the web page at a given url.",
   "main": "./index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "xo && ava"
   },
   "repository": {
     "type": "git",
     "url": "https://github.com/m4bwav/get-title-at-url.git"
   },
   "homepage": "https://github.com/m4bwav/get-title-at-url",
+  "bugs": {
+    "url": "http://github.com/m4bwav/get-title-at-url/issues"
+  },
   "author": "Mark Rogers",
   "files": [
     "index.js",
@@ -33,5 +36,16 @@
     "article-title": "1.0.2",
     "meow": "3.7.0",
     "is-url": "1.2.1"
+  },
+  "devDependencies": {
+    "ava": "*",
+    "execa": "^0.4.0",
+    "indent-string": "^2.1.0",
+    "xo": "*"
+  },
+  "xo": {
+    "rules": {
+      "xo/no-process-exit": "off"
+    }
   }
 }
