@@ -40,12 +40,13 @@
   "devDependencies": {
     "ava": "*",
     "execa": "^0.4.0",
-    "indent-string": "^2.1.0",
-    "xo": "*"
+    "xo": "^0.15.0"
   },
   "xo": {
     "rules": {
-      "xo/no-process-exit": "off"
+      "xo/no-process-exit": "off",
+      "linebreak-style":  ["error", "windows"],
+      "indent": ["error", 2]
     }
   }
 }
