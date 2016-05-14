@@ -1,7 +1,5 @@
 # get-title-at-url
 
-[![Join the chat at https://gitter.im/m4bwav/get-title-at-url](https://badges.gitter.im/m4bwav/get-title-at-url.svg)](https://gitter.im/m4bwav/get-title-at-url?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
-
 [![npm package](https://nodei.co/npm/get-title-at-url.png?downloads=true&downloadRank=true&stars=true)](https://nodei.co/npm/get-title-at-url/)
 
 [![Build Status](https://travis-ci.org/m4bwav/get-title-at-url.svg?branch=master)](https://travis-ci.org/m4bwav/get-title-at-url)
