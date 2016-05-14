@@ -5,7 +5,7 @@
   "description": "Retrieves the title of the web page at a given url.",
   "main": "./index.js",
   "scripts": {
-    "test": "xo && nyc ava",
+    "test": "snyk test && xo && nyc ava",
     "coverage": "nyc report --reporter=text-lcov | coveralls",
     "travis-after-success": "nyc report --reporter=text-lcov | coveralls"
   },
@@ -35,7 +35,6 @@
   "license": "MIT",
   "dependencies": {
     "article-title": "1.0.2",
-    "coveralls": "^2.11.9",
     "is-url": "1.2.1",
     "meow": "3.7.0",
     "request": "~2.72.0"
@@ -46,7 +45,8 @@
     "coveralls": "^2.11.9",
     "codecov.io": "^0.1.6",
     "nyc": "^6.4.4",
-    "xo": "^0.15.0"
+    "xo": "^0.15.0",
+    "snyk": "^1.14.3"
   },
   "xo": {
     "rules": {
