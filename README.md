@@ -6,7 +6,7 @@
 [![Dependency Status](https://david-dm.org/m4bwav/get-title-at-url.svg)](https://david-dm.org/m4bwav/get-title-at-url)
 [![Coverage Status](https://coveralls.io/repos/github/m4bwav/get-title-at-url/badge.svg?branch=master)](https://coveralls.io/github/m4bwav/get-title-at-url?branch=master)
 [![Known Vulnerabilities](https://snyk.io/test/npm/get-title-at-url/badge.svg?style=flat-square)](https://snyk.io/test/npm/get-title-at-url)
-[![npm](https://img.shields.io/npm/v/npm.svg?maxAge=2592000)](https://www.npmjs.com/package/get-title-at-url)
+[![npm](https://img.shields.io/npm/v/get-title-at-url.svg?maxAge=2592000)](https://www.npmjs.com/package/get-title-at-url)
 [![XO code style](https://img.shields.io/badge/code_style-XO-5ed9c7.svg)](https://github.com/sindresorhus/xo)
 [![Gitter](https://badges.gitter.im/m4bwav/get-title-at-url.svg)](https://gitter.im/m4bwav/get-title-at-url?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
 
