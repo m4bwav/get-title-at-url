@@ -9,3 +9,12 @@ test.cb('support help shortcut', function (t) {
     t.end();
   });
 });
+
+test('Won\'t work with an invalid url', function () {
+  getTitleAtUrl('afewaefaefwf', function () {
+  });
+});
+
+test('Won\'t work without a callback', function () {
+  getTitleAtUrl('afewaefaefwf');
+});
