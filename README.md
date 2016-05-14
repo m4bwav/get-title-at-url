@@ -4,6 +4,7 @@
 
 [![Build Status](https://travis-ci.org/m4bwav/get-title-at-url.svg?branch=master)](https://travis-ci.org/m4bwav/get-title-at-url)
 [![Dependency Status](https://david-dm.org/m4bwav/get-title-at-url.svg)](https://david-dm.org/m4bwav/get-title-at-url)
+[![Coverage Status](https://coveralls.io/repos/github/m4bwav/get-title-at-url/badge.svg?branch=master)](https://coveralls.io/github/m4bwav/get-title-at-url?branch=master)
 [![Known Vulnerabilities](https://snyk.io/test/npm/get-title-at-url/badge.svg?style=flat-square)](https://snyk.io/test/npm/get-title-at-url)
 
 Npm package to retrieve the title at a given url.  Largely combines articleTitle with request.
