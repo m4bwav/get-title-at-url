@@ -6,7 +6,8 @@
   "main": "./index.js",
   "scripts": {
     "test": "xo && nyc ava",
-    "coveralls": "nyc report --reporter=text-lcov | coveralls"
+    "coverage": "nyc report --reporter=text-lcov | coveralls",
+    "travis-after-success": "nyc report --reporter=text-lcov | coveralls"
   },
   "repository": {
     "type": "git",
@@ -33,17 +34,18 @@
   ],
   "license": "MIT",
   "dependencies": {
-    "request": "~2.72.0",
     "article-title": "1.0.2",
+    "coveralls": "^2.11.9",
+    "is-url": "1.2.1",
     "meow": "3.7.0",
-    "is-url": "1.2.1"
+    "request": "~2.72.0"
   },
   "devDependencies": {
     "ava": "*",
     "execa": "^0.4.0",
     "coveralls": "^2.11.9",
     "codecov.io": "^0.1.6",
-    "nyc": "^6.1.1",
+    "nyc": "^6.4.4",
     "xo": "^0.15.0"
   },
   "xo": {
