@@ -1,6 +1,6 @@
 {
   "name": "get-title-at-url",
-  "version": "1.0.20",
+  "version": "1.0.21",
   "bin": "cli.js",
   "description": "Retrieves the title of the web page at a given url.",
   "main": "./index.js",
