@@ -37,7 +37,7 @@
     "article-title": "1.0.2",
     "is-url": "1.2.1",
     "meow": "3.7.0",
-    "request": "~2.72.0"
+    "request": "~2.74.0"
   },
   "devDependencies": {
     "ava": "*",
