@@ -7,7 +7,9 @@
 [![Coverage Status](https://img.shields.io/coveralls/m4bwav/get-title-at-url/master.svg)](https://coveralls.io/github/m4bwav/get-title-at-url?branch=master)
 [![Known Vulnerabilities](https://snyk.io/test/npm/get-title-at-url/badge.svg?style=flat-square)](https://snyk.io/test/npm/get-title-at-url)
 [![XO code style](https://img.shields.io/badge/code_style-XO-5ed9c7.svg)](https://github.com/sindresorhus/xo)
-[![Gitter](https://badges.gitter.im/m4bwav/get-title-at-url.svg)](https://gitter.im/m4bwav/get-title-at-url?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
+[![Gitter](https://badges.gitter.im/m4bwav/get-title-at-url.svg)](https://gitter.im/m4bwav/get-title-at-url?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)  
+  
+[![NPM](https://nodei.co/npm-dl/get-title-at-url.png?months=3)](https://nodei.co/npm/get-title-at-url/)
 
 Npm package to retrieve the title at a given url.  Largely combines articleTitle with request.
 
