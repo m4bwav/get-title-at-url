@@ -35,18 +35,18 @@
   "license": "MIT",
   "dependencies": {
     "article-title": "1.0.2",
-    "is-url": "1.2.1",
+    "is-url": "1.2.2",
     "meow": "3.7.0",
-    "request": "~2.74.0"
+    "request": "^2.75.0"
   },
   "devDependencies": {
     "ava": "*",
     "execa": "^0.4.0",
-    "coveralls": "^2.11.9",
+    "coveralls": "^2.11.13",
     "codecov.io": "^0.1.6",
-    "nyc": "^6.4.4",
-    "xo": "^0.15.1",
-    "snyk": "^1.14.3"
+    "nyc": "^8.0.0",
+    "xo": "^0.16.0",
+    "snyk": "^1.19.1"
   },
   "xo": {
     "rules": {

@@ -16,7 +16,7 @@ test.cb('support help shortcut', function (t) {
 test('Won\'t work with an invalid url', function (t) {
   try {
     getTitleAtUrl('afewaefaefwf', function () { });
-  } catch (exception) {
+  } catch (err) {
     t.pass();
   }
 });
@@ -34,7 +34,7 @@ test('Shouldn\'t work with a 404', function (t) {
 test('Won\'t work without a callback', function (t) {
   try {
     getTitleAtUrl(validUrl);
-  } catch (exception) {
+  } catch (err) {
     t.pass();
   }
 });
