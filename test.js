@@ -21,13 +21,16 @@ test('Won\'t work with an invalid url', function (t) {
   }
 });
 
-test('Shouldn\'t work with a 404', function (t) {
+test.cb('Shouldn\'t work with a 404', function (t) {
   getTitleAtUrl(fourOhFourUrl, function (title, error) {
+    // t.context.log = console.log;
+
     if (error) {
       t.pass();
     } else {
       t.fail();
     }
+    t.end();
   });
 });
 

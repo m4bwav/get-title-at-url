@@ -1,11 +1,11 @@
 {
   "name": "get-title-at-url",
-  "version": "1.0.27",
+  "version": "1.1.0",
   "bin": "cli.js",
   "description": "Retrieves the title of the web page at a given url.",
   "main": "./index.js",
   "scripts": {
-    "test": "snyk test && xo && nyc ava",
+    "test": "snyk test && xo && nyc ava --verbose",
     "coverage": "nyc report --reporter=text-lcov | coveralls",
     "travis-after-success": "nyc report --reporter=text-lcov | coveralls"
   },
@@ -34,13 +34,13 @@
   ],
   "license": "MIT",
   "dependencies": {
-    "article-title": "1.0.2",
+    "article-title": "2.0.0",
     "is-url": "1.2.2",
     "meow": "3.7.0",
-    "request": "^2.75.0"
+    "request": "^2.81.0"
   },
   "devDependencies": {
-    "ava": "*",
+    "ava": "^0.19.1",
     "execa": "^0.4.0",
     "coveralls": "^2.11.13",
     "codecov.io": "^0.1.6",

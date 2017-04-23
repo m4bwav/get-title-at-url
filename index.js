@@ -26,6 +26,8 @@ module.exports = function (url, callback) {
 
     if (!error && response.statusCode === 200) {
       title = articleTitle(body);
+    } else if (!error && response.statusCode === 404) {
+      error = '404';
     }
     callback(title, error);
   }
