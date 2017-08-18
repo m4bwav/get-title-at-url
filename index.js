@@ -18,7 +18,7 @@ module.exports = function (url, callback) {
   }
 
   if (!callback) {
-    throw new Error('Callback must be set to recieve the title for the url.');
+    throw new Error('Callback must be set to receive the title for the url.');
   }
 
   function requestResponseHandler(error, response, body) {

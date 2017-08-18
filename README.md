@@ -50,7 +50,7 @@ $ get-title-at-url --help
 ```
 
 The getTitleAtUrl will use the callback function with the following signature callback(title, requestError).
-The requestError will be whatever error request passes back, the title will be empty if there was an issue. 
+The requestError will be whatever error request passes back, the title will be empty if there was an issue.
 ## License
 
 MIT © [Mark Rogers](http://www.markdavidrogers.com)
