@@ -5,7 +5,8 @@
   "description": "Retrieves the title of the web page at a given url.",
   "main": "./index.js",
   "scripts": {
-    "test": "snyk test && xo && nyc ava",
+    "test": "xo && nyc ava",
+    "old-test": "snyk test && xo && nyc ava",
     "coverage": "nyc report --reporter=text-lcov | coveralls",
     "travis-after-success": "nyc report --reporter=text-lcov | coveralls"
   },

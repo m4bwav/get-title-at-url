@@ -10,7 +10,6 @@
 [![XO code style](https://img.shields.io/badge/code_style-XO-5ed9c7.svg)](https://github.com/sindresorhus/xo)
 [![Gitter](https://badges.gitter.im/m4bwav/get-title-at-url.svg)](https://gitter.im/m4bwav/get-title-at-url?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)  
   
-[![NPM](https://nodei.co/npm-dl/get-title-at-url.png?months=3)](https://nodei.co/npm/get-title-at-url/)
 
 Npm package to retrieve the title at a given url.  Largely combines articleTitle with request.
 
