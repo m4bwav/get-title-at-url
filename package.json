@@ -37,16 +37,16 @@
     "article-title": "2.0.0",
     "is-url": "1.2.4",
     "meow": "3.7.0",
-    "request": "^2.81.0"
+    "request": "^2.88.0"
   },
   "devDependencies": {
     "ava": "^0.19.1",
-    "execa": "^0.4.0",
-    "coveralls": "^2.11.13",
     "codecov.io": "^0.1.6",
+    "coveralls": "^2.13.3",
+    "execa": "^0.4.0",
     "nyc": "^8.0.0",
-    "xo": "^0.16.0",
-    "snyk": "^1.19.1"
+    "snyk": "^1.251.1",
+    "xo": "^0.16.0"
   },
   "xo": {
     "rules": {
