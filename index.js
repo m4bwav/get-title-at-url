@@ -23,12 +23,21 @@ module.exports = function (url, callback) {
 
   function requestResponseHandler(error, response, body) {
     var title;
-
+    // console.log('start: ' + url);
     if (!error && response.statusCode === 200) {
+      if (body) {
+        // console.log('Response body length equals ' + body.length);
+      } else {
+        // console.log('empty response body');
+      }
+
       title = articleTitle(body);
     } else if (!error && response.statusCode === 404) {
       error = '404';
+    } else {
+      // console.log('unexpected response code: ' + response.statusCode);
     }
+
     callback(title, error);
   }
 

@@ -4,6 +4,7 @@ import getTitleAtUrl from './';
 global.Promise = Promise;
 
 var validUrl = 'http://www.google.com';
+// var difficultUrl = 'http://www.yahoo.com';
 var fourOhFourUrl = 'http://www.google.com/aa';
 
 test.cb('support help shortcut', function (t) {
@@ -41,3 +42,10 @@ test('Won\'t work without a callback', function (t) {
     t.pass();
   }
 });
+
+// test.cb('can handle Yahoo', function (t) {
+//   getTitleAtUrl(difficultUrl, function (title) {
+//     t.truthy(title);
+//     t.end();
+//   });
+// });

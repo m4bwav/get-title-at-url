@@ -6,6 +6,7 @@
   "main": "./index.js",
   "scripts": {
     "test": "xo && nyc ava",
+    "snyk-wizard": "snyk wizard",
     "old-test": "snyk test && xo && nyc ava",
     "coverage": "nyc report --reporter=text-lcov | coveralls",
     "travis-after-success": "nyc report --reporter=text-lcov | coveralls"
@@ -35,10 +36,10 @@
   ],
   "license": "MIT",
   "dependencies": {
-    "article-title": "2.0.0",
+    "article-title": "^3.1.0",
     "is-url": "1.2.4",
-    "meow": "3.7.0",
-    "request": "^2.88.0"
+    "meow": "^3.7.0",
+    "request": "^2.88.2"
   },
   "devDependencies": {
     "ava": "^0.19.1",
@@ -46,7 +47,7 @@
     "coveralls": "^2.13.3",
     "execa": "^0.4.0",
     "nyc": "^8.0.0",
-    "snyk": "^1.251.1",
+    "snyk": "^1.415.0",
     "xo": "^0.16.0"
   },
   "xo": {
