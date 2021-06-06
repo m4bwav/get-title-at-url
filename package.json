@@ -37,7 +37,7 @@
   "dependencies": {
     "article-title": "2.0.0",
     "is-url": "1.2.4",
-    "meow": "3.7.0",
+    "meow": "6.0.0",
     "request": "^2.88.0"
   },
   "devDependencies": {
