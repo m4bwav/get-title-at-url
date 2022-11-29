@@ -3,7 +3,7 @@
 [![npm package](https://nodei.co/npm/get-title-at-url.png?downloads=true&downloadRank=true&stars=true)](https://nodei.co/npm/get-title-at-url/)
 
 [![Build Status](https://img.shields.io/travis/m4bwav/get-title-at-url/master.svg)](https://travis-ci.org/m4bwav/get-title-at-url)
-![npm](https://img.shields.io/npm/dt/get-title-at-url?style=plastic)
+![npm](https://img.shields.io/npm/dt/get-title-at-url?style=plastic)npm 
 [![Coverage Status](https://img.shields.io/coveralls/m4bwav/get-title-at-url/master.svg)](https://coveralls.io/github/m4bwav/get-title-at-url?branch=master)
 [![Known Vulnerabilities](https://snyk.io/test/npm/get-title-at-url/badge.svg?style=flat-square)](https://snyk.io/test/npm/get-title-at-url)
 [![XO code style](https://img.shields.io/badge/code_style-XO-5ed9c7.svg)](https://github.com/sindresorhus/xo)
