@@ -26,11 +26,12 @@ Installation is easiest through npm:
 **get-title-at-url** can be included as a reference.
 
 ```
-var getTitleAtUrl = require('get-title-at-url');
+import getTitleAtUrl from 'get-title-at-url';
 
-getTitleAtUrl(url, function(title){
-  console.log(title);
-});
+const {title} = await getTitleAtUrl(url);
+
+console.log(title);
+
 ```
 
 ## CLI
@@ -49,8 +50,8 @@ $ get-title-at-url --help
     $ get-title-at-url "http://www.google.com"
 ```
 
-The getTitleAtUrl will use the callback function with the following signature callback(title, requestError).
-The requestError will be whatever error request passes back, the title will be empty if there was an issue.
+The getTitleAtUrl will return a promise that resolves to `{title, error}`.  `title` will be unset if `error` is present and vice versa.
+The `error` will be whatever error request passes back, the title will be empty if there was an issue.
 ## License
 
 MIT © [Mark Rogers](http://www.markdavidrogers.com)

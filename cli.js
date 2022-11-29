@@ -1,27 +1,26 @@
 #!/usr/bin/env node
-'use strict';
-var meow = require('meow')
-  ;
+import meow from 'meow';
+import getTitleAtUrl from './index.js';
 
-var getTitleAtUrl = require('./')
-  ;
+const cli = meow(`
+    Usage
+      $ get-title-at-url "<url>"
+    
+    Example
+      $ get-title-at-url "http://www.theonion.com/"
+  
+`, {importMeta: import.meta});
 
-var cli = meow({
-  help: [
-    'Usage',
-    '  $ get-title-at-url "<url>"',
-    '',
-    'Example',
-    '  $ get-title-at-url "http://www.theonion.com/"'
-  ]
-});
+const input = cli.input[0];
 
-var input = cli.input[0];
+async function init(url) {
+  const {title, error} = await getTitleAtUrl(url);
 
-function init(url) {
-  getTitleAtUrl(url, function (title) {
+  if (error) {
+    console.log(`error: ${error}`);
+  } else {
     console.log(title);
-  });
+  }
 }
 
-init(input);
+await init(input);

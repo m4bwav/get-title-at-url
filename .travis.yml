@@ -3,6 +3,8 @@ language: node_js
 node_js:
   - node
 
-after_success: npm run coverage
+after_success: 
+  - NODE_ENV=test
+  - npm run coverage
 
 sudo: false

@@ -2,13 +2,19 @@
   "name": "get-title-at-url",
   "version": "1.1.8",
   "bin": "cli.js",
+  "type": "module",
   "description": "Retrieves the title of the web page at a given url.",
   "main": "./index.js",
   "scripts": {
     "test": "xo && nyc ava",
+    "test-no-lint": "nyc ava",
+    "test-just-ava": "ava",
     "snyk-wizard": "snyk wizard",
     "old-test": "snyk test && xo && nyc ava",
     "coverage": "nyc report --reporter=text-lcov | coveralls",
+    "windows-coverage": "set NODE_ENV=test&& nyc report --reporter=text-lcov | coveralls",
+    "coverage-nyc-report": "nyc report --reporter=text-lcov",
+    "coveralls": "coveralls",
     "travis-after-success": "nyc report --reporter=text-lcov | coveralls"
   },
   "repository": {
@@ -36,19 +42,19 @@
   ],
   "license": "MIT",
   "dependencies": {
-    "article-title": "^3.1.0",
+    "article-title": "^4.1.0",
+    "axios": "^1.1.3",
     "is-url": "1.2.4",
-    "meow": "^3.7.0",
-    "request": "^2.88.2"
+    "meow": "^11.0.0"
   },
   "devDependencies": {
-    "ava": "^0.19.1",
+    "ava": "^5.1.0",
     "codecov.io": "^0.1.6",
-    "coveralls": "^2.13.3",
-    "execa": "^0.4.0",
-    "nyc": "^8.0.0",
-    "snyk": "^1.415.0",
-    "xo": "^0.16.0"
+    "coveralls": "^3.1.1",
+    "execa": "^6.1.0",
+    "nyc": "^15.1.0",
+    "snyk": "^1.1063.0",
+    "xo": "^0.53.1"
   },
   "xo": {
     "rules": {

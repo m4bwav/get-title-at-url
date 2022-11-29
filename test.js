@@ -1,51 +1,63 @@
 import test from 'ava';
-import getTitleAtUrl from './';
+import getTitleAtUrl from './index.js';
 
 global.Promise = Promise;
 
-var validUrl = 'http://www.google.com';
-// var difficultUrl = 'http://www.yahoo.com';
-var fourOhFourUrl = 'http://www.google.com/aa';
+const validUrl = 'http://www.google.com';
+const difficultUrl = 'https://www.yahoo.com';
+const fourOhFourUrl = 'http://www.google.com/aa';
 
-test.cb('support help shortcut', function (t) {
-  getTitleAtUrl(validUrl, function (title) {
+test('support help shortcut', async t => {
+  const resultCallback = (title, error, response, body) => {
+    if (error) {
+      t.log(error);
+      t.fail(`error: ${error}, response: ${JSON.stringify(response)}`);
+      return;
+    }
+
+    console.error('first test result');
+    if (!title) {
+      t.fail(`Failed to retrieve a title for Google, body: ${body}, response: ${response}`);
+    }
+
     t.is(title, 'Google');
-    t.end();
-  });
+  };
+
+  const {title, error, body, response} = await getTitleAtUrl(validUrl);
+
+  resultCallback(title, error, response, body);
 });
 
-test('Won\'t work with an invalid url', function (t) {
+test('Won\'t work with an invalid url', async t => {
   try {
-    getTitleAtUrl('afewaefaefwf', function () { });
-  } catch (err) {
-    t.pass();
-  }
-});
-
-test.cb('Shouldn\'t work with a 404', function (t) {
-  getTitleAtUrl(fourOhFourUrl, function (title, error) {
-    // t.context.log = console.log;
+    const {error} = await getTitleAtUrl('afewaefaefwf', () => {});
 
     if (error) {
       t.pass();
     } else {
       t.fail();
     }
-    t.end();
-  });
-});
-
-test('Won\'t work without a callback', function (t) {
-  try {
-    getTitleAtUrl(validUrl);
-  } catch (err) {
+  } catch {
     t.pass();
   }
 });
 
-// test.cb('can handle Yahoo', function (t) {
-//   getTitleAtUrl(difficultUrl, function (title) {
-//     t.truthy(title);
-//     t.end();
-//   });
-// });
+test('Shouldn\'t work with a 404', async t => {
+  const callback = (title, error) => {
+    if (error) {
+      t.pass();
+    } else {
+      t.fail();
+    }
+  };
+
+  const {title, error} = await getTitleAtUrl(fourOhFourUrl);
+
+  callback(title, error);
+});
+
+test('can handle Yahoo', async t => {
+  const {title} = await getTitleAtUrl(difficultUrl);
+
+  t.is(title, 'Yahoo');
+});
