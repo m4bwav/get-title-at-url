@@ -10,7 +10,7 @@
 [![Gitter](https://badges.gitter.im/m4bwav/get-title-at-url.svg)](https://gitter.im/m4bwav/get-title-at-url?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)  
   
 
-Npm package to retrieve the title at a given url.  Largely combines articleTitle with request.
+Npm package to retrieve the title at a given url.  Largely combines articleTitle with Axios.
 
 
 ## Installation
