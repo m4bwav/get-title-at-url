@@ -25,7 +25,7 @@ Ship `get-title-at-url` 3.0.0 to npm so that it is as available as possible:
 
 ## Status
 
-2026-09-25: plan written from the 2026-09-24 inventory and research; nothing in the code has changed; Stage 0 waits for Mark to read the decisions table (D1 to D17). Update this section as stages land.
+2026-09-25: plan written from the 2026-09-24 inventory and research. Mark read the decisions table and kept every recommendation. Stage 0's agent tasks are done (bot PRs closed, stale branches, webhooks and dead settings gone; evidence in the log); Mark's two browser tasks (uninstall Snyk, confirm npm 2FA) are still open. Stage 1 is under way on branch `v3`. Update this section as stages land.
 
 ## Where it stands (inventory taken 2026-09-24)
 
@@ -222,11 +222,11 @@ JSR takes the TypeScript source directly (no build) and has about 22,000 package
 ## Stage 0: housekeeping and baseline (2026-09-24 to 2026-09-26, no code changes)
 
 - [x] 2026-09-24: cloned to `D:\m4bwa\Claude\Projects\Ai\get-title-at-url`; everlast doc set registered (mode repo, sync push); baseline recorded above; research notes and this plan written.
-- [ ] Mark: read the decisions table; say which recommendations to change. Silence means the recommendations stand.
-- [ ] Agent: close the 11 bot PRs with one comment each ("Superseded by the v3 rewrite, which drops axios and the dev tools these updates target") and delete their branches; delete `develop`. Commands in the appendix.
-- [ ] Agent: delete the three webhooks (Travis id 83047120, Snyk ids 14564186 and 278618458). Commands in the appendix.
+- [x] Mark: read the decisions table; say which recommendations to change. Silence means the recommendations stand. (2026-09-25: read; every recommendation kept.)
+- [x] Agent: close the 11 bot PRs with one comment each ("Superseded by the v3 rewrite, which drops axios and the dev tools these updates target") and delete their branches; delete `develop`. Commands in the appendix. (2026-09-25: done; each comment also names its advisory. The inventory's 14 branches included two left by PRs #4 and #5, closed unmerged in 2022, which the appendix loop could not reach; deleted too, so only `master` remains. Evidence in the log.)
+- [x] Agent: delete the three webhooks (Travis id 83047120, Snyk ids 14564186 and 278618458). Commands in the appendix. (2026-09-25: done, the hooks API returns 0.)
 - [ ] Mark: uninstall Snyk from GitHub (github.com/settings/installations, then remove the project at app.snyk.io) so it stops opening PRs. The `gh` token cannot list app installations (verified: HTTP 403), so this is a browser task.
-- [ ] Agent: repo settings through `gh`: description "Get the title of the web page at a URL. Zero dependencies, TypeScript, ESM and CommonJS, Node 20+.", homepage `https://www.npmjs.com/package/get-title-at-url`, topics (`title`, `html`, `url`, `fetch`, `scraper`, `cli`, `typescript`, `nodejs`), wiki and projects off, delete-branch-on-merge on, secret scanning and push protection on, private vulnerability reporting on, Actions default workflow permissions read-only. Commands in the appendix.
+- [x] Agent (2026-09-25, read back and logged): repo settings through `gh`: description "Get the title of the web page at a URL. Zero dependencies, TypeScript, ESM and CommonJS, Node 20+.", homepage `https://www.npmjs.com/package/get-title-at-url`, topics (`title`, `html`, `url`, `fetch`, `scraper`, `cli`, `typescript`, `nodejs`), wiki and projects off, delete-branch-on-merge on, secret scanning and push protection on, private vulnerability reporting on, Actions default workflow permissions read-only. Commands in the appendix.
 - [ ] Mark: confirm the npm account has two-factor authentication on (npmjs.com, Account, Two-Factor Authentication). Trusted publishing itself is configured in Stage 3, after the workflow file exists.
 
 ## Stage 1: rewrite on branch `v3` (2026-09-26 to 2026-10-03)
@@ -371,7 +371,7 @@ Reviewed 2026-09-24 against the diffs and the advisories they cite. No fork is a
 
 | PR | What it changes | Is the concern valid? | Merge? | Disposition |
 |---|---|---|---|---|
-| #9 (Dependabot, 2023-01-09) | lockfile only: json5 1.0.1 to 1.0.2 (CVE-2021-44906, prototype pollution) | Yes, but json5 is in the dev tree (babel, brought in by nyc and coveralls) | No | Superseded: v3 removes nyc and coveralls; the new lockfile has no json5 1.x |
+| #9 (Dependabot, 2023-01-09) | lockfile only: json5 1.0.1 to 1.0.2 (prototype pollution; the CVE-2021-44906 in the PR body is json5's changelog line about minimist, not this fix) | Yes, but json5 is in the dev tree (babel, brought in by nyc and coveralls) | No | Superseded: v3 removes nyc and coveralls; the new lockfile has no json5 1.x |
 | #10 (Dependabot, 2023-03-15) | lockfile only: webpack 5.75.0 to 5.76.1 (CVE-2022-37603, GHSA-3rfm-jhwj-7488) | Yes, dev tree only (webpack comes in through snyk) | No | Superseded: snyk is removed |
 | #11, #12, #13, #15, #16, #17, #18 (Snyk) | `axios` range from `^1.1.3` to 1.6.0, 1.6.3, 1.6.4, 1.7.8, 1.8.2, 1.8.3, 1.12.0 (CVE-2023-45857 token leak, ReDoS, prototype pollution, SSRF in 1.8.x, unbounded `data:` URI in 1.12.0) | Yes, every one is a real advisory against the axios versions the 2.0.0 lockfile pins. For consumers the effect is small: the published range `^1.1.3` already resolves to axios 1.20.0 on a fresh install, so only consumers with a stale lockfile of their own are exposed, and a new `get-title-at-url` version cannot change their lockfile | No, each is obsolete once a later one exists; seven competing lockfile edits | Superseded: v3 has no axios. Close with a comment naming the advisory and pointing at the 3.0.0 changelog |
 | #14 (Snyk, 2024-09-09) | `axios` to `^1.6.8` and `meow` to `^12.1.0` (SNYK-JS-SEMVER-3247795 ReDoS through meow 11's normalize-package-data, two follow-redirects issues) | Yes, and this is the one PR that touches the CLI's own tree: meow 11 pulls `semver` 7.3.8 at runtime (`npm ls semver --omit=dev` confirms). meow 12 bundles its dependencies, so the semver path disappears | No, for the same lockfile reason | Superseded: v3 uses meow 14, which has zero dependencies |
