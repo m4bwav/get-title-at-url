@@ -1,6 +1,6 @@
 {
   "name": "get-title-at-url",
-  "version": "3.0.0-beta.1",
+  "version": "3.0.0",
   "description": "Get the title of the web page at a URL. Zero dependencies, TypeScript, ESM and CommonJS, Node 20+.",
   "license": "MIT",
   "repository": {
