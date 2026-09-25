@@ -76,3 +76,5 @@ Append-only. One line per operation: `## [YYYY-MM-DD] op | title` where op is on
 ## [2026-09-25] update | pull request #21 denies unrs-resolver's install script (package.json allowScripts false) and AGENTS.md's dependency rule says how to handle the next one; locally a fresh npm ci printed 0 warnings, lint ok, 186 of 186 tests, publint and attw clean; CI run 36162124587 green in all 11 jobs; squash-merged as bdcdcf9; nothing a consumer installs changes, so no release
 ## [2026-09-25] update | local branch v3 deleted: its tip a173016 equals GitHub's refs/pull/20/head and its tree equals 8f43080, so pull request #20 keeps it; the vault's saved next-session prompt marked done, because a second session started from it after the release
 ## [2026-09-25] handoff | updated: pull request #21, checklist re-checked, v3 branch deleted
+## [2026-09-25] add | note: v4 research: Node 24 floor, require(esm), TextDecoder, TypeScript 7, JSR (September 2026)
+## [2026-09-25] add | plan: v4: raise the floor to Node 24 when Node 22 reaches end of life
