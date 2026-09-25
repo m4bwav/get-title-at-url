@@ -1,0 +1,17 @@
+{
+  "extends": ["@tsconfig/node20/tsconfig.json", "@tsconfig/node-ts/tsconfig.json"],
+  "compilerOptions": {
+    "module": "nodenext",
+    "moduleResolution": "nodenext",
+    "isolatedModules": true,
+    "declaration": true,
+    "noEmit": true,
+    "noUncheckedIndexedAccess": true,
+    "noImplicitOverride": true,
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true
+  },
+  "include": ["src", "tsdown.config.ts"]
+}
