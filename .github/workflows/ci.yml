@@ -50,6 +50,8 @@ jobs:
           node-version: 24
           cache: npm
       - run: npm ci
+      # publint packs without lifecycle scripts, so dist/ must exist first.
+      - run: npm run build
       - name: publint, attw and the pack file list
         run: npm run check
       - name: Coverage of src/ (95 percent lines, 90 percent branches)
