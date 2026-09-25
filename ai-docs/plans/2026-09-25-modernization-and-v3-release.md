@@ -25,7 +25,7 @@ Ship `get-title-at-url` 3.0.0 to npm so that it is as available as possible:
 
 ## Status
 
-2026-09-25: plan written from the 2026-09-24 inventory and research. Mark read the decisions table and kept every recommendation. Stage 0's agent tasks are done (bot PRs closed, stale branches, webhooks and dead settings gone; evidence in the log); Mark's two browser tasks (uninstall Snyk, confirm npm 2FA) are still open. Stage 1 is written and verified on the local branch `v3` (not pushed): lint, types, build, 186 tests, publint, attw, coverage 100 percent, 7 consumer fixtures and the live smoke all pass on Node 24, the suites also on Node 20 and 22, and from a fresh clone. The pull request waits for Mark's review; the Stage 1 notes list where the build departs from this plan. Update this section as stages land.
+2026-09-25: plan written from the 2026-09-24 inventory and research. Mark read the decisions table and kept every recommendation. Stage 0's agent tasks are done (bot PRs closed, stale branches, webhooks and dead settings gone; evidence in the log); Mark's two browser tasks (uninstall Snyk, confirm npm 2FA) are still open. Stage 1 is written and verified on branch `v3`: lint, types, build, 186 tests, publint, attw, coverage 100 percent, 7 consumer fixtures and the live smoke all pass on Node 24, the suites also on Node 20 and 22, and from a fresh clone. The Stage 1 notes list where the build departs from this plan. Later on 2026-09-25 Mark said to push everything and hand the rest of the plan to a new session: `v3` is on GitHub (`origin/v3`) and the pull request is the next step. Mark did not answer the two open points in the Stage 1 notes, so the current choices stand and go into the pull request body. Update this section as stages land.
 
 ## Where it stands (inventory taken 2026-09-24)
 
@@ -242,7 +242,7 @@ JSR takes the TypeScript source directly (no build) and has about 22,000 package
 - [x] `CHANGELOG.md` (Keep a Changelog format) with the 3.0.0 section and a compressed history of 1.x and 2.0.0 taken from the tags.
 - [x] `SECURITY.md` pointing at GitHub private vulnerability reporting.
 - [x] Local verification on Node 24: `npm run lint`, `npm run typecheck`, `npm run build`, `npm test`, `npm run check`, `npm pack --dry-run` lists `dist/*`, `README.md`, `LICENSE`, `CHANGELOG.md`, `package.json` and nothing else. Record the output in the log. (2026-09-25, all green, also on Node 20 and 22 and from a fresh clone; the pack lists everything in dist except dist/cli.mjs.map.)
-- [ ] Open the pull request `v3` into `master` so Stage 2's CI runs on it; squash-merge when green. Waits for Mark's review of the diff and the test output.
+- [ ] Open the pull request `v3` into `master` so Stage 2's CI runs on it; squash-merge when green. Waits for Mark's review of the diff and the test output. (2026-09-25: Mark said to push everything and continue in a new session; `v3` is pushed, the pull request is not opened yet.)
 
 ### Stage 1 notes (2026-09-25): findings and where the build departs from the plan
 
@@ -402,4 +402,4 @@ Verdict: the bots were right about the problems and wrong about the cure. Mergin
 
 ## Next single action
 
-Mark reviews the v3 diff and test output (and the two open points in the Stage 1 notes: the tarball budget and publishing source maps); then the agent pushes `v3`, opens the pull request into `master`, and starts Stage 2 (CI, release and verification workflows, Dependabot, the ruleset) on the same branch.
+Open the pull request `v3` into `master`, listing the two open points from the Stage 1 notes (the tarball budget and publishing source maps, and the departures) in its body for Mark; then start Stage 2 (CI, release and verification workflows, Dependabot, the ruleset) on the same branch.

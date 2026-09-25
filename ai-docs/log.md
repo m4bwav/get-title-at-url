@@ -35,3 +35,6 @@ Append-only. One line per operation: `## [YYYY-MM-DD] op | title` where op is on
 ## [2026-09-25] update | Stage 1: nothing published to npm; the v3 pull request is not opened, waiting for Mark's review of the diff and test output
 ## [2026-09-25] handoff | Stage 1 verified on v3; pull request waits for Mark's review
 ## [2026-09-25] index | rebuilt (7 entries)
+## [2026-09-25] update | v3 pushed to GitHub (head 2c74916, upstream origin/v3); pull request not opened; Mark said to push everything and hand the rest of the plan to a new session; the two open points stand as they are and go into the pull request body
+## [2026-09-25] update | GitHub reports 82 open Dependabot alerts on master, all in the old package-lock.json; v3's regenerated lockfile audits clean, so the merge should close them
+## [2026-09-25] handoff | v3 pushed; the next session opens the pull request and runs Stage 2
