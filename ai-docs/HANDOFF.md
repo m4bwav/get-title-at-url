@@ -13,16 +13,16 @@ Updated 2026-09-25 (3.0.0 released and verified; Stages 0 to 3 of the plan are d
 
 ## Stage 4: standing work
 
-1. Dependabot opens npm and GitHub Actions pull requests every Monday. Merge when the `ci` check is green; read the release notes for a major first. tsdown is pre-1.0 and pinned exactly: if a bump breaks the build, the fallback is two `tsc` passes (plan, Risks). Move to TypeScript 7 when tsdown and xo both support it.
+1. Dependabot opens npm and GitHub Actions pull requests every Monday. Merge when the `ci` check is green; read the release notes for a major first. tsdown is pre-1.0 and pinned exactly: if a bump breaks the build, the fallback is two `tsc` passes (plan, Risks). The first scheduled run is Monday 2026-09-28. `.github/dependabot.yml` holds two majors (pull request #22): TypeScript 7 until xo supports it (xo 5 and typescript-eslint accept only TypeScript below 6.1 on 2026-09-25; when a new xo does, remove that rule and let the TypeScript 7 pull request through CI), and the Node type definitions, which stay on 24 and move by hand with `engines`.
 2. A patch or minor release follows the ritual above; no beta needed unless release.yml or the npm setup changed. Within 24 hours of a publish Deno needs `--minimum-dependency-age=0` ([solutions/2026-09-25-deno-2-9-refuses-an-npm-version-published-in-the-last-24-hou.md](solutions/2026-09-25-deno-2-9-refuses-an-npm-version-published-in-the-last-24-hou.md)).
 3. `live.yml` runs weekly against example.com, google.com and yahoo.com; red there means a real site changed its title, not that the package broke. Nothing opens automatically.
-4. Node 26 becomes Active LTS on 2026-10-28 (already in the matrix). Node 22 reaches end of life on 2027-04-30: plan v4 then with `engines.node` ">=24".
-5. Optional, Mark's call: `npm dist-tag rm get-title-at-url next` from his own login (2FA) so `next` stops pointing at the beta; the next prerelease would overwrite it anyway. Delete the leftover project at app.snyk.io (it can no longer reach the repository).
+4. v4 is planned: [plans/2026-09-25-v4-raise-the-floor-to-node-24-when-node-22-reaches-end-of-li.md](plans/2026-09-25-v4-raise-the-floor-to-node-24-when-node-22-reaches-end-of-li.md). 4.0.0 on or after 2027-04-30 (Node 22 end of life) with `engines.node` ">=24"; decisions V1 to V7 wait for Mark (silence means the recommendations stand); nothing to build before April 2027. Its facts: [notes/2026-09-25-v4-research-node-24-floor-require-esm-textdecoder-typescript.md](notes/2026-09-25-v4-research-node-24-floor-require-esm-textdecoder-typescript.md). Node 26 becomes Active LTS on 2026-10-28 (already in the matrix).
+5. The `next` dist-tag stays on 3.0.0-beta.1 (advised 2026-09-25): the beta is the same code as 3.0.0 apart from the version number, removing the tag needs an npm login on this machine plus 2FA, and v4's 4.0.0-beta.1 moves `next` anyway. Optional, Mark's call: delete the leftover project at app.snyk.io (it can no longer reach the repository).
 6. Optional Stage 5: publish to JSR from the same source; a "title of a URL" tool page on markdavidrogers.com.
 
 ## Next single action
 
-Nothing is pending. Start from item 1 when Dependabot pull requests appear.
+Nothing is pending. Start from item 1 when Dependabot pull requests appear (first run Monday 2026-09-28); v4 starts on 2027-04-01 with the v4 plan's Stage B.
 
 ## Dead ends hit
 

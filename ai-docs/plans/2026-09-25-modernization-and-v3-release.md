@@ -292,8 +292,8 @@ Evidence is in the log.
 
 ## Stage 4: keep it healthy (from 2026-10-10)
 
-- [ ] Merge Dependabot PRs when CI is green; read release notes for majors.
-- [ ] Node 26 becomes Active LTS on 2026-10-28 and is already in the matrix. Node 22 reaches end of life on 2027-04-30: plan v4 then with `engines.node: ">=24"` (Node 24 is supported until 2028-04-30).
+- [ ] Merge Dependabot PRs when CI is green; read release notes for majors. Standing work. (2026-09-25: no Dependabot pull request yet, the first scheduled run is Monday 2026-09-28. Pull request #22 (1874bd1) holds two majors that cannot or should not merge: TypeScript 7, because xo 5 and typescript-eslint accept only TypeScript below 6.1, until xo supports 7; and the Node type definitions, which stay on 24 and move by hand with `engines`.)
+- [x] Node 26 becomes Active LTS on 2026-10-28 and is already in the matrix. Node 22 reaches end of life on 2027-04-30: plan v4 then with `engines.node: ">=24"` (Node 24 is supported until 2028-04-30). (2026-09-25: v4 planned in [2026-09-25-v4-raise-the-floor-to-node-24-when-node-22-reaches-end-of-li.md](2026-09-25-v4-raise-the-floor-to-node-24-when-node-22-reaches-end-of-li.md): 4.0.0 on or after 2027-04-30, decisions V1 to V7 for Mark, nothing to build before April 2027.)
 - [ ] Optional Stage 5: publish to JSR from the same source (`jsr.json`, `npx jsr publish` with OIDC in `release.yml`); a small "title of a URL" tool page on markdavidrogers.com using the same package (the site plan's Stage 3 tools area).
 
 ## Verification checklist (what "done" means)
