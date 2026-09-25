@@ -322,7 +322,7 @@ Evidence is in the log.
 - Staged publishing and `--tag next`: npm refuses to stage a prerelease without `--tag` (npm 11.19 source, 2026-09-25), so a beta cannot become `latest` at staging; whether the approval keeps the staged tag is still the rehearsal's question.
 - npm 12 blocks dependency install scripts by default and Dependabot waits 3 days before proposing a new version; both are wanted, neither affects this package's own scripts.
 - Node 26 may not be Active LTS yet on the release day; the matrix runs it anyway and the `engines` range (`>=20`) already includes it.
-- Windows development: `.gitattributes` keeps LF in the repo; the Write tool produces CRLF, so normalise after batch writes (see the user tier note).
+- Windows development: `.gitattributes` keeps LF in the repo and git normalises on commit. On 2026-09-25 the Write and Edit tools wrote LF, checked by counting byte 13; the earlier belief that the Write tool writes CRLF may come from a grep check, which cannot see carriage returns in Git Bash (user tier solution of 2026-09-25). Check line endings by byte count after batch writes.
 - Browser callers cannot fetch arbitrary sites (CORS). The README states it and points them at `extractTitle` with their own proxy.
 
 ## Appendix: Stage 0 commands (run from any directory; all paths absolute)

@@ -52,3 +52,4 @@ Append-only. One line per operation: `## [YYYY-MM-DD] op | title` where op is on
 ## [2026-09-25] verify | Dependabot alerts closed by the merge: dependabot/alerts?state=open returns 0 at 14:41:27Z (82 open before); all 100 alerts on record are fixed, fixed_at 14:40:32Z to 14:40:56Z
 ## [2026-09-25] handoff | 31 lines
 ## [2026-09-25] index | rebuilt (7 entries)
+## [2026-09-25] update | correction to the trap logged earlier today: grep -c with an ANSI-C quoted carriage return did not lose a backslash or match the letter r; in Git Bash 5.3.15 that string is empty inside a command substitution (length 1 outside, 0 inside, reproduced from a script file run by Git Bash directly), so grep matched every line and LF files looked like CRLF; counting byte 13 with node remains the reliable check

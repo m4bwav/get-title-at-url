@@ -15,7 +15,7 @@ The npm package `get-title-at-url`: fetch a web page and return its title, as a 
 - **Research beats recall.** Node, npm and tool versions change; the notes under `ai-docs/notes/` carry the date each fact was verified. Re-verify any version number older than three months before relying on it.
 - **Document for handoff.** Anything learned, decided or built goes into `ai-docs/` (at minimum a line in `ai-docs/log.md`) before you finish; rewrite `ai-docs/HANDOFF.md` when work is left unfinished. A fresh session in any tool must be able to continue from disk alone.
 - **No AI attribution anywhere**: no Co-Authored-By trailers, no "generated with" lines in commits, PRs or files.
-- **Windows note.** The repository is LF (`.gitattributes`); after batch-writing files on Windows, normalise line endings before committing.
+- **Windows note.** The repository is LF (`.gitattributes`); after batch-writing files on Windows, check line endings by counting byte 13 with node (Git Bash's grep cannot see carriage returns) and normalise before committing.
 
 ## Commands
 
