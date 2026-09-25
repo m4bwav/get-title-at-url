@@ -1,6 +1,6 @@
 # Handoff
 
-Updated 2026-09-25 (3.0.0 released and verified; Stages 0 to 3 of the plan are done, Stage 4 is standing work). Read this first, then [log.md](log.md) when you need evidence.
+Updated 2026-09-25 (3.0.0 released and verified; Stages 0 to 3 of the plan are done, the checklist holds, Stage 4 is standing work). Read this first, then [log.md](log.md) when you need evidence.
 
 ## Current state
 
@@ -8,6 +8,7 @@ Updated 2026-09-25 (3.0.0 released and verified; Stages 0 to 3 of the plan are d
 - Verified from the registry: verify-published run 36156488030 green in all 15 jobs (Node 20, 22, 24 and 26 on Ubuntu, Windows and macOS, Bun, Deno); locally `npm audit signatures` verified the signature and the attestation. The npm page now shows the v3 README (three working badges).
 - How releases work, with the exact npmjs.com fields: [solutions/2026-09-25-publish-to-npm-from-github-actions-without-a-stored-token-th.md](solutions/2026-09-25-publish-to-npm-from-github-actions-without-a-stored-token-th.md). The ritual is in AGENTS.md: dated changelog heading, `npm version`, `git push --follow-tags`, Mark approves in the Staged Packages tab, then run `verify-published.yml` with the version.
 - The pull request #20 "For review" points (50 kB tarball budget with source maps; the four Stage 1 departures) were settled by Mark approving 3.0.0 as built.
+- After the release: pull request #21 (bdcdcf9) denies unrs-resolver's dev-only install script, so a fresh `npm ci` prints no warnings; the verification checklist was re-checked row by row (plan, under the checklist). The local `v3` branch is deleted (pull request #20 keeps its commits). The vault's saved next-session prompt is marked done; start from this file.
 - The plan, now a record: [plans/2026-09-25-modernization-and-v3-release.md](plans/2026-09-25-modernization-and-v3-release.md).
 
 ## Stage 4: standing work

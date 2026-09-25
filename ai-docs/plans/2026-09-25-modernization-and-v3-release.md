@@ -313,6 +313,8 @@ Evidence is in the log.
 | No alerts | `gh api repos/m4bwav/get-title-at-url/dependabot/alerts?state=open --jq length` | `0` |
 | Repo tidy | `gh pr list`, `git branch -r`, `gh api .../hooks` | 0 bot PRs, only `master`, 0 webhooks |
 
+Checked row by row on 2026-09-25 after the release (evidence in the log): every row holds. A fresh clone's `npm ci` printed no deprecation warnings and 0 vulnerabilities, but npm 11.16 warned that unrs-resolver's install script (dev only) was not covered by `allowScripts`; pull request #21 denies it, and a fresh `npm ci` is now silent. `npm ls --omit=dev --all` is empty; publint and attw clean in CI; CJS gives `object function`, ESM `function`; Node 20, 22, 24 and 26 plus Bun and Deno green in verify-published run 36156488030 (bunx and deno run the published CLI there); provenance and signatures verified; `gh release view v3.0.0` has the notes; 0 alerts; 0 open pull requests, only `master` on GitHub, 0 webhooks.
+
 ## Risks and open points
 
 - tsdown is pre-1.0 (0.23.0 on 2026-09-03). Pin it exactly in devDependencies; if a Dependabot bump breaks the build, the fallback is two `tsc` passes (ESM, then CJS with a `package.json` `{"type": "commonjs"}` in `dist/cjs`).
