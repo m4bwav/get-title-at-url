@@ -1,6 +1,6 @@
 # Handoff
 
-Updated 2026-09-25 (Stages 1 and 2 done and merged; Stage 3 waits for Mark to add the npm trusted publisher). Read this first, then [log.md](log.md) and, in the plan, the Stage 2 notes and Stage 3.
+Updated 2026-09-25 (Stages 1 and 2 done and merged; Stage 3 waits for Mark to add the npm trusted publisher). Read this first, then [log.md](log.md) and, in the plan, the Stage 2 notes and Stage 3. A later session on 2026-09-25 re-checked every claim below against GitHub and npm (log line "session start (Stage 3)"), found nothing changed, and asked Mark for the publisher.
 
 ## Current state
 
