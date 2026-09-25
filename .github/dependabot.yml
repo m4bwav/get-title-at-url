@@ -10,6 +10,14 @@ updates:
     groups:
       minor-and-patch:
         update-types: [minor, patch]
+    ignore:
+      # TypeScript 7: xo 5 bundles TypeScript 6 and typescript-eslint accepts only TypeScript below 6.1 (checked 2026-09-25).
+      # Remove this rule when xo supports TypeScript 7 (ai-docs/HANDOFF.md, Stage 4).
+      - dependency-name: typescript
+        update-types: ['version-update:semver-major']
+      # @types/node stays on Node 24, the line the package builds on and v4's engines floor; bump it by hand with engines.
+      - dependency-name: '@types/node'
+        update-types: ['version-update:semver-major']
 
   - package-ecosystem: github-actions
     directory: /
