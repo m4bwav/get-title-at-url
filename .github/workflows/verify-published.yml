@@ -1,0 +1,158 @@
+# After Mark approves a staged version on npmjs.com, run this with the version: it installs that version from the
+# registry on Linux, Windows and macOS with every Node line, and under Bun and Deno, runs the consumer fixtures
+# against it, runs the CLI against example.com, and verifies the registry signatures and the provenance attestation.
+name: verify-published
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: The published version to verify, for example 3.0.0
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+defaults:
+  run:
+    shell: bash
+
+env:
+  VERSION: ${{ inputs.version }}
+  CONSUMER_PACKAGE: get-title-at-url@${{ inputs.version }}
+
+jobs:
+  registry:
+    name: wait for the version on the registry
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: 24
+          package-manager-cache: false
+      - name: The version is valid and on npm
+        run: |
+          if ! [[ "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+(-[0-9A-Za-z.-]+)?$ ]]; then
+            echo "::error::$VERSION is not a version number"
+            exit 1
+          fi
+          # The registry can take a few minutes to serve a version everywhere after approval.
+          for attempt in $(seq 1 20); do
+            if [ "$(npm view "$CONSUMER_PACKAGE" version 2>/dev/null)" = "$VERSION" ]; then
+              npm view get-title-at-url dist-tags
+              exit 0
+            fi
+            echo "not on the registry yet (attempt $attempt of 20)"
+            sleep 30
+          done
+          echo "::error::$CONSUMER_PACKAGE is not on the registry after 10 minutes"
+          exit 1
+
+  node:
+    name: node ${{ matrix.node }} (${{ matrix.os }})
+    needs: registry
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-24.04, windows-latest, macos-latest]
+        node: [20, 22, 24, 26]
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 15
+    steps:
+      # The fixtures as they were at the release's tag.
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: v${{ inputs.version }}
+          persist-credentials: false
+      # The fixtures take their TypeScript and Node types versions from the repository's lockfile, installed on Node 24.
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: 24
+          package-manager-cache: false
+      - run: npm ci
+      - name: Node ${{ matrix.node }} for the checks
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: ${{ matrix.node }}
+          package-manager-cache: false
+      - run: node --version && npm --version
+      - name: Consumer fixtures against the registry package
+        run: node --test test/consumers/consumers.test.js
+      # From an empty directory: inside the checkout, npx could take the repository itself for the package.
+      - name: npx runs the published CLI
+        working-directory: ${{ runner.temp }}
+        run: |
+          title=$(npx -y "$CONSUMER_PACKAGE" https://example.com/)
+          echo "$title"
+          [ "$title" = "Example Domain" ]
+      - name: Registry signatures and the provenance attestation
+        run: |
+          project="$RUNNER_TEMP/audit-signatures"
+          mkdir -p "$project"
+          cd "$project"
+          npm init -y > /dev/null
+          npm install --no-audit --no-fund "$CONSUMER_PACKAGE"
+          npm audit signatures
+
+  bun:
+    name: bun
+    needs: registry
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: v${{ inputs.version }}
+          persist-credentials: false
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: 24
+          package-manager-cache: false
+      - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2.2.0
+        with:
+          bun-version: latest
+      - run: npm ci
+      - run: bun --version
+      - name: Consumer fixtures under Bun against the registry package
+        run: node --test test/consumers/consumers.test.js
+        env:
+          CONSUMER_RUNTIMES: bun
+      - name: bunx runs the published CLI on Bun
+        working-directory: ${{ runner.temp }}
+        run: |
+          title=$(bunx --bun "$CONSUMER_PACKAGE" https://example.com/)
+          echo "$title"
+          [ "$title" = "Example Domain" ]
+
+  deno:
+    name: deno
+    needs: registry
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: v${{ inputs.version }}
+          persist-credentials: false
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: 24
+          package-manager-cache: false
+      - uses: denoland/setup-deno@22d081ff2d3a40755e97629de92e3bcbfa7cf2ed # v2.0.5
+        with:
+          deno-version: 2.x
+      - run: npm ci
+      - run: deno --version
+      - name: Consumer fixtures under Deno against the registry package
+        run: node --test test/consumers/consumers.test.js
+        env:
+          CONSUMER_RUNTIMES: deno
+      # From an empty directory: next to the checkout's package.json, Deno would resolve npm: from its node_modules.
+      - name: deno runs the published CLI from npm
+        working-directory: ${{ runner.temp }}
+        run: |
+          title=$(deno run -A "npm:$CONSUMER_PACKAGE" https://example.com/)
+          echo "$title"
+          [ "$title" = "Example Domain" ]

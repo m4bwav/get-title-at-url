@@ -1,0 +1,140 @@
+# A tag v<version> (pushed by `npm version` and `git push --follow-tags`) builds and tests the package, stages it on npm
+# through trusted publishing, and creates the GitHub Release. Nothing goes live until Mark approves the staged version
+# on npmjs.com with two-factor authentication; then run verify-published.yml with the version.
+# No npm token exists anywhere: npm exchanges the job's OIDC token for a short-lived one, and adds provenance itself.
+# The trusted publisher on npmjs.com names this file, release.yml; renaming it breaks publishing.
+name: release
+
+on:
+  push:
+    tags: ['v*']
+
+permissions:
+  contents: read
+
+concurrency:
+  group: release
+  cancel-in-progress: false
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  build:
+    name: build and test the release
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    outputs:
+      version: ${{ steps.version.outputs.version }}
+      dist-tag: ${{ steps.version.outputs.dist-tag }}
+      prerelease: ${{ steps.version.outputs.prerelease }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: 24
+          package-manager-cache: false
+      - name: The tag must equal the package.json version
+        id: version
+        env:
+          TAG: ${{ github.ref_name }}
+        run: |
+          version=$(node -p "require('./package.json').version")
+          if [ "$TAG" != "v$version" ]; then
+            echo "::error::tag $TAG does not match the package.json version $version"
+            exit 1
+          fi
+          # A prerelease such as 3.0.0-beta.1 is staged under the next dist-tag, a release under latest.
+          if [[ "$version" == *-* ]]; then
+            echo "dist-tag=next" >> "$GITHUB_OUTPUT"
+            echo "prerelease=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "dist-tag=latest" >> "$GITHUB_OUTPUT"
+            echo "prerelease=false" >> "$GITHUB_OUTPUT"
+          fi
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+      - name: Release notes from the changelog
+        env:
+          VERSION: ${{ steps.version.outputs.version }}
+        run: |
+          # The lines under "## [<version>]" up to the next "## " heading.
+          section() {
+            awk -v heading="## [$1]" '
+              /^## / { if (found) exit; found = (index($0, heading) == 1); next }
+              found { print }
+            ' CHANGELOG.md
+          }
+          notes=$(section "$VERSION")
+          # A prerelease takes the section of the release it leads to: 3.0.0-beta.1 uses 3.0.0.
+          if [ -z "$notes" ] && [[ "$VERSION" == *-* ]]; then
+            notes=$(section "${VERSION%%-*}")
+          fi
+          if [ -z "$notes" ]; then
+            echo "::error::CHANGELOG.md has no section for $VERSION"
+            exit 1
+          fi
+          # A release needs its date in the heading, not "Unreleased".
+          if [[ "$VERSION" != *-* ]] && ! grep -Eq "^## \[${VERSION//./\\.}\] - [0-9]{4}-[0-9]{2}-[0-9]{2}" CHANGELOG.md; then
+            echo "::error::the CHANGELOG.md heading for $VERSION has no date"
+            exit 1
+          fi
+          printf '%s\n' "$notes" > release-notes.md
+      - run: npm ci
+      - run: npm run lint
+      - run: npm run typecheck
+      - run: npm test
+      - name: publint, attw and the pack file list
+        run: npm run check
+      - name: Consumer fixtures from the packed tarball
+        run: npm run test:consumers
+      - name: Pack the tarball that gets staged
+        run: npm pack --ignore-scripts
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: release
+          path: |
+            get-title-at-url-${{ steps.version.outputs.version }}.tgz
+            release-notes.md
+          if-no-files-found: error
+
+  publish:
+    name: stage on npm and create the GitHub Release
+    needs: build
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    # The only job with write permissions, and it runs no dependency code: it stages the tarball the build job tested.
+    permissions:
+      contents: write
+      id-token: write
+    steps:
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: 24
+          registry-url: https://registry.npmjs.org
+          package-manager-cache: false
+      - name: npm must be 11.15 or later to stage
+        run: |
+          npm --version
+          node -e "const [major, minor] = process.argv[1].split('.').map(Number); process.exit(major > 11 || (major === 11 && minor >= 15) ? 0 : 1)" "$(npm --version)"
+      - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          name: release
+      - name: Stage on npm for Mark's approval
+        env:
+          VERSION: ${{ needs.build.outputs.version }}
+          DIST_TAG: ${{ needs.build.outputs.dist-tag }}
+        run: npm stage publish "./get-title-at-url-$VERSION.tgz" --tag "$DIST_TAG"
+      - name: GitHub Release with the changelog section
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ github.ref_name }}
+          PRERELEASE: ${{ needs.build.outputs.prerelease }}
+        run: |
+          flags=()
+          if [ "$PRERELEASE" = true ]; then
+            flags+=(--prerelease)
+          fi
+          gh release create "$TAG" --repo "$GITHUB_REPOSITORY" --verify-tag --title "$TAG" --notes-file release-notes.md "${flags[@]}"

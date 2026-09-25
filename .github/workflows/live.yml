@@ -1,0 +1,30 @@
+# Opt-in live smoke test against real sites (example.com, google.com, yahoo.com), weekly and on demand.
+# Never part of the pull request gate: a site changing its markup is not a bug in this package. A failure opens
+# nothing; it shows red on the Actions tab.
+name: live
+
+on:
+  schedule:
+    - cron: '23 6 * * 1'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  live:
+    name: live smoke test
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - run: npm run test:live
+        env:
+          LIVE_TESTS: '1'

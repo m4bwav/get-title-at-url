@@ -1,0 +1,5 @@
+{
+  "name": "ts-bundler",
+  "private": true,
+  "type": "module"
+}
