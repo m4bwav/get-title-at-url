@@ -1,26 +1,26 @@
 # Handoff
 
-Updated 2026-09-25 (Stages 1 and 2 done and merged; Stage 3 waits for Mark to add the npm trusted publisher). Read this first, then [log.md](log.md) and, in the plan, the Stage 2 notes and Stage 3. A later session on 2026-09-25 re-checked every claim below against GitHub and npm (log line "session start (Stage 3)"), found nothing changed, and asked Mark for the publisher.
+Updated 2026-09-25 (Stage 3 rehearsal: 3.0.0-beta.1 staged on npm, waiting for Mark's approval). Read this first, then [log.md](log.md) and, in the plan, Stage 3.
 
 ## Current state
 
-- Published: 2.0.0 on npm (2022-11-29), unchanged; nothing has been published to npm. Every fresh install of 2.0.0 has thrown on import since cheerio 1.0.0 (2024-08-09), see the log, so 3.0.0 also replaces a broken release.
-- `master` holds v3: pull request #20 (the TypeScript rewrite plus the Stage 2 GitHub setup) squash-merged as 8f43080. CI green on the pull request (run 36148707435) and on `master` (run 36149048659). Dependabot alerts: 0 open. `origin/v3` was deleted by the merge; the local `v3` branch is fully merged.
-- Workflows: `ci.yml` (ruleset 24003504 on `master` requires its final `ci` job; the admin bypasses it, so direct pushes by m4bwav work), `release.yml` (on a `v*` tag: a read-only build job, then a publish job that stages the tested tarball with `npm stage publish --tag next` or `latest` and creates the GitHub Release), `verify-published.yml` (manual, version input), `live.yml` (weekly). Dependabot weekly for npm and the actions.
+- Published: 2.0.0 is still `latest` on npm. Every fresh install of 2.0.0 has thrown on import since cheerio 1.0.0 (2024-08-09), see the log, so 3.0.0 also replaces a broken release.
+- `master` holds v3 (pull request #20, squash-merged as 8f43080) plus the version commit e26bf22 "3.0.0-beta.1" and the annotated tag `v3.0.0-beta.1`. CI green on e26bf22 (run 36153098994). Dependabot alerts: 0 open.
+- Trusted publisher on npmjs.com: added by Mark (GitHub Actions, m4bwav / get-title-at-url, release.yml, environment blank, direct `npm publish` not allowed). Publishing access requires 2FA and disallows bypass tokens.
+- Release run 36153096874 (tag v3.0.0-beta.1) green: 186 of 186 tests, publint and attw clean, consumers 7 pass and 5 skipped, tarball 40.2 kB, 11 files. `npm stage publish` staged it "with tag next", stage id f6123f79-4603-46ce-91b8-23d82362cb18, provenance signed (sigstore log index 2957911315). GitHub prerelease v3.0.0-beta.1 exists.
 - The pull request body's "For review" points (50 kB tarball budget with source maps; the four Stage 1 departures) stand; Mark can still change them before 3.0.0.
-- Docs: commit and push them on `master` from now on.
+- Docs: commit and push them on `master`.
 - The plan: [plans/2026-09-25-modernization-and-v3-release.md](plans/2026-09-25-modernization-and-v3-release.md). Build and test traps: [notes/2026-09-25-v3-build-and-test-traps-tsdown-0-23-xo-5-npm-11-node-test.md](notes/2026-09-25-v3-build-and-test-traps-tsdown-0-23-xo-5-npm-11-node-test.md).
 
 ## Waiting on Mark
 
-1. Add the trusted publisher on npmjs.com: the package's Settings, Trusted publishing, GitHub Actions; user m4bwav, repository get-title-at-url, workflow filename release.yml, environment blank, allowed actions stage only (leave direct npm publish unticked). Then tell the agent.
-2. Confirm npm two-factor authentication (approving a staged version needs it).
-3. Uninstall the Snyk GitHub app (github.com/settings/installations) and remove the project at app.snyk.io.
-4. Later: approve each staged version on npmjs.com; once 3.0.0 is out, set "Require two-factor authentication and disallow tokens".
+1. Approve the staged 3.0.0-beta.1 on npmjs.com: the package's Staged Packages tab, Approve, 2FA (docs.npmjs.com/staged-publishing). Then tell the agent.
+2. Snyk: Mark revoked it under GitHub's Authorized OAuth Apps. Still unconfirmed: github.com/settings/installations lists no Snyk app, and the project is gone from app.snyk.io.
+3. Later: approve the staged 3.0.0 the same way.
 
 ## Next single action
 
-When Mark confirms the publisher: on `master`, `npm version 3.0.0-beta.1`, `git push --follow-tags`, and watch `release.yml` stage the beta under the next tag. Stop for Mark's approval; then run the rehearsal checks in the plan's Stage 3 and `verify-published.yml` with 3.0.0-beta.1.
+After Mark's approval: `npm view get-title-at-url@next version` (3.0.0-beta.1), `npm view get-title-at-url dist-tags` (`latest` still 2.0.0, `next` 3.0.0-beta.1: the open question of whether approval keeps the staged tag), `npx -y get-title-at-url@next https://example.com/`, `npm audit signatures` in a temp project, then `gh workflow run verify-published.yml -f version=3.0.0-beta.1` and watch it. Then 3.0.0: date the changelog heading, `npm version 3.0.0`, `git push --follow-tags`, stop for approval.
 
 ## Dead ends hit
 
