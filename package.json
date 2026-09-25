@@ -32,8 +32,9 @@
   },
   "scripts": {
     "build": "tsdown",
-    "test": "npm run build && node --test test/unit/extract-title.test.js test/functional/get-title-at-url.test.js test/cli/cli.test.js test/package/shape.test.js",
-    "test:consumers": "node --test test/consumers/consumers.test.js",
+    "test": "npm run build && npm run test:dist",
+    "test:dist": "node --test test/unit/extract-title.test.js test/functional/get-title-at-url.test.js test/cli/cli.test.js test/package/shape.test.js",
+    "test:consumers": "npm run build && node --test test/consumers/consumers.test.js",
     "test:live": "npm run build && node --test test/live/live.test.js",
     "coverage": "npm run build && c8 --check-coverage --lines 95 --branches 90 --exclude-after-remap --include \"src/**\" --reporter text --reporter lcov node --test test/unit/extract-title.test.js test/functional/get-title-at-url.test.js test/cli/cli.test.js",
     "lint": "xo",
