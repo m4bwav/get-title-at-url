@@ -1,6 +1,6 @@
 # Handoff
 
-Updated 2026-09-25 (3.0.0 released and verified; Stages 0 to 3 of the plan are done, the checklist holds, Stage 4 is standing work). Read this first, then [log.md](log.md) when you need evidence.
+Updated 2026-09-25 (3.0.0 released and verified; Stages 0 to 3 of the plan are done, the checklist holds, Stage 4 is standing work; the Stage 5 tool page is live on markdavidrogers.com's preview). Read this first, then [log.md](log.md) when you need evidence.
 
 ## Current state
 
@@ -18,7 +18,12 @@ Updated 2026-09-25 (3.0.0 released and verified; Stages 0 to 3 of the plan are d
 3. `live.yml` runs weekly against example.com, google.com and yahoo.com; red there means a real site changed its title, not that the package broke. Nothing opens automatically.
 4. v4 is planned: [plans/2026-09-25-v4-raise-the-floor-to-node-24-when-node-22-reaches-end-of-li.md](plans/2026-09-25-v4-raise-the-floor-to-node-24-when-node-22-reaches-end-of-li.md). 4.0.0 on or after 2027-04-30 (Node 22 end of life) with `engines.node` ">=24"; decisions V1 to V7 wait for Mark (silence means the recommendations stand); nothing to build before April 2027. Its facts: [notes/2026-09-25-v4-research-node-24-floor-require-esm-textdecoder-typescript.md](notes/2026-09-25-v4-research-node-24-floor-require-esm-textdecoder-typescript.md). Node 26 becomes Active LTS on 2026-10-28 (already in the matrix).
 5. The `next` dist-tag stays on 3.0.0-beta.1 (advised 2026-09-25): the beta is the same code as 3.0.0 apart from the version number, removing the tag needs an npm login on this machine plus 2FA, and v4's 4.0.0-beta.1 moves `next` anyway. Optional, Mark's call: delete the leftover project at app.snyk.io (it can no longer reach the repository).
-6. Optional Stage 5: publish to JSR from the same source (advised against on 2026-09-25: JSR has no approval step, needs code changes, and Deno users already install from npm); a "title of a URL" tool page on markdavidrogers.com, whose prompt for a fresh session is in the everlast vault at projects/markdavidrogers-web/private/notes/2026-09-25-prompt-for-a-fresh-session-the-title-of-a-url-tool-on-tools.md (server-side fetch with SSRF protection in the web repo, the package in a React island on /tools).
+6. Optional Stage 5, still open: publish to JSR from the same source (advised against on 2026-09-25: JSR has no approval step, needs code changes, and Deno users already install from npm). **The tool-page half is done** (2026-09-25): the "title of a URL" tool is live on the markdavidrogers.com preview at `/tools`.
+   - Source: markdavidrogers-web PR #12, merge 77a453b, Deploy run 36174106424.
+   - How it works: the server fetches the page behind SSRF guards and returns its first bytes as JSON; `getTitleAtUrl(url, {fetch})` in the island rebuilds a `Response` from that, so this package does the charset work and the error codes.
+   - Verified live: example.com and a Shift_JIS page ("太宰治 走れメロス"); 169.254.169.254 and localhost refused.
+   - Design and evidence: the web repo's `ai-docs/decisions/2026-09-25-title-of-a-url-tool.md`.
+   - The site depends on `get-title-at-url` ^3.0.0 in `client/`, so a breaking change here reaches `/tools` through Dependabot there.
 
 ## Next single action
 
