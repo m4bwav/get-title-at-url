@@ -3,7 +3,8 @@
 */
 const xoConfig = [
   {
-    ignores: ['ai-docs/**'],
+    // The type fixture imports the built package, so it only resolves after a build; the consumer fixtures type-check it against the installed tarball instead.
+    ignores: ['ai-docs/**', 'test/consumers/types/**'],
   },
   {
     space: 2,
