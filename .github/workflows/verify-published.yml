@@ -150,9 +150,11 @@ jobs:
         env:
           CONSUMER_RUNTIMES: deno
       # From an empty directory: next to the checkout's package.json, Deno would resolve npm: from its node_modules.
+      # Since Deno 2.9, npm: skips versions published in the last 24 hours by default; this job runs minutes after
+      # the approval, so it turns that policy off for this one command.
       - name: deno runs the published CLI from npm
         working-directory: ${{ runner.temp }}
         run: |
-          title=$(deno run -A "npm:$CONSUMER_PACKAGE" https://example.com/)
+          title=$(deno run -A --minimum-dependency-age=0 "npm:$CONSUMER_PACKAGE" https://example.com/)
           echo "$title"
           [ "$title" = "Example Domain" ]
