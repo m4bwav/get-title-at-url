@@ -1,0 +1,161 @@
+# Every push to master and every pull request: lint and types, the package's shape and coverage, the suites and the
+# consumer fixtures on each Node line (Linux) and on Windows and macOS, and the fixtures under Bun and Deno.
+# The ruleset on master requires the final `ci` job, which passes only when every other job passed.
+name: ci
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  lint:
+    name: lint and typecheck
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - run: npm run lint
+      - run: npm run typecheck
+
+  package:
+    name: package shape and coverage
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - name: publint, attw and the pack file list
+        run: npm run check
+      - name: Coverage of src/ (95 percent lines, 90 percent branches)
+        run: npm run coverage
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: coverage-lcov
+          path: coverage/lcov.info
+          if-no-files-found: error
+
+  test:
+    name: test (Node ${{ matrix.node }}, ${{ matrix.os }})
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-24.04]
+        node: [20, 22, 24, 26]
+        include:
+          - os: windows-latest
+            node: 24
+          - os: macos-latest
+            node: 24
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      # tsdown needs Node 22.18 or later, so every job installs and builds on Node 24, then tests on its own Node.
+      - name: Node 24 to install and build
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - run: npm run build
+      - name: Node ${{ matrix.node }} to run the tests
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: ${{ matrix.node }}
+      - run: node --version && npm --version
+      - name: Unit, functional, CLI and package suites against both builds
+        run: npm run test:dist
+      - name: Consumer fixtures from the packed tarball
+        run: node --test test/consumers/consumers.test.js
+
+  bun:
+    name: bun
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: 24
+          cache: npm
+      - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2.2.0
+        with:
+          bun-version: latest
+      - run: npm ci
+      - run: npm run build
+      - run: bun --version
+      - name: Consumer fixtures and the bin under Bun, from the packed tarball
+        run: node --test test/consumers/consumers.test.js
+        env:
+          CONSUMER_RUNTIMES: bun
+
+  deno:
+    name: deno
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: 24
+          cache: npm
+      - uses: denoland/setup-deno@22d081ff2d3a40755e97629de92e3bcbfa7cf2ed # v2.0.5
+        with:
+          deno-version: 2.x
+      - run: npm ci
+      - run: npm run build
+      - run: deno --version
+      - name: Consumer fixtures and the bin under Deno, from the packed tarball
+        run: node --test test/consumers/consumers.test.js
+        env:
+          CONSUMER_RUNTIMES: deno
+
+  ci:
+    name: ci
+    if: ${{ always() }}
+    needs: [lint, package, test, bun, deno]
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - name: Every job passed
+        env:
+          RESULTS: ${{ join(needs.*.result, ' ') }}
+        run: |
+          echo "job results: $RESULTS"
+          for result in $RESULTS; do
+            if [ "$result" != success ]; then
+              exit 1
+            fi
+          done
