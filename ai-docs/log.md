@@ -84,3 +84,4 @@ Append-only. One line per operation: `## [YYYY-MM-DD] op | title` where op is on
 ## [2026-09-25] update | npm dist-tag next left on 3.0.0-beta.1 on advice: git diff v3.0.0-beta.1 v3.0.0 shows src, tsdown.config.ts and tsconfig.json identical (only the version, the changelog date and verify-published.yml differ); this machine has no npm login (npm whoami ENEEDAUTH) and the tag change would need one plus 2FA; 4.0.0-beta.1 moves next
 ## [2026-09-25] handoff | Stage 4 list updated: Dependabot holds, v4 plan, dist-tag advice
 ## [2026-09-25] index | rebuilt (11 entries)
+## [2026-09-25] update | Stage 5: JSR advised against (no approval step, code changes for the version define and the CLI, Deno already installs from npm); for the tool page on markdavidrogers.com a prompt for a fresh session is saved in the vault (projects/markdavidrogers-web/private/notes), built on the web repo's /tools page, /api/tools endpoints and island pattern, with SSRF rules
