@@ -1,0 +1,5 @@
+{
+  "name": "ts-nodenext-esm",
+  "private": true,
+  "type": "module"
+}
