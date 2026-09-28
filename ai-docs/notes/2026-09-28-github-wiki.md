@@ -70,4 +70,4 @@ Worth adding at the next README change (omissions, not errors): the spaced-dash 
 - A Python string in a Bash heredoc turned `\n` into a real newline inside the generated JavaScript (wikiwright L-001).
 - The xo config ignores `ai-docs/**`, so the verification script does not affect `npm run lint`.
 
-Related: see also [../HANDOFF.md](../HANDOFF.md), [../log.md](../log.md); the sibling notes `DotNetJsonPrettyPrinter/ai-docs/notes/2026-09-28-github-wiki.md` and `DotNetRandomNameGenerator/ai-docs/notes/2026-09-28-github-wiki.md`.
+Related: see also [../HANDOFF.md](../HANDOFF.md), [../log.md](../log.md); the sibling wiki notes of 2026-09-28 in the m4bwav/DotNetJsonPrettyPrinter and m4bwav/DotNetRandomNameGenerator repositories (ai-docs, notes folder).
