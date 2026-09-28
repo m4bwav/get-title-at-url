@@ -25,6 +25,8 @@ Updated 2026-09-25 (3.0.0 released and verified; Stages 0 to 3 of the plan are d
    - Design and evidence: the web repo's `ai-docs/decisions/2026-09-25-title-of-a-url-tool.md`.
    - The site depends on `get-title-at-url` ^3.0.0 in `client/`, so a breaking change here reaches `/tools` through Dependabot there.
 
+7. The GitHub wiki (https://github.com/m4bwav/get-title-at-url/wiki, nine pages, written 2026-09-28 with the wikiwright skill) documents 3.0.0. Every release runs wikiwright's update mode: the procedure, the verification script and the pages that name the version are in [notes/2026-09-28-github-wiki.md](notes/2026-09-28-github-wiki.md). The note also lists four README and CHANGELOG inaccuracies to fix at the next README change, and recommends deprecating 2.0.0 on npm (Mark's call).
+
 ## Next single action
 
 Nothing is pending. Start from item 1 when Dependabot pull requests appear (first run Monday 2026-09-28); v4 starts on 2027-04-01 with the v4 plan's Stage B.
