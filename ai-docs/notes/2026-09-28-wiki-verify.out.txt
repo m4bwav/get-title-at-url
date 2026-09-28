@@ -1,0 +1,899 @@
+## installed
+get-title-at-url@3.0.0 on Node v24.18.0
+
+## esm exports
+[
+  "GetTitleError",
+  "default",
+  "extractTitle",
+  "getTitleAtUrl"
+]
+
+## cjs exports
+[
+  "GetTitleError",
+  "default",
+  "extractTitle",
+  "getTitleAtUrl"
+]
+
+## cjs default is the same function
+true
+
+## esm default is getTitleAtUrl
+true
+
+## package.json exports, bin, engines, files in tarball
+{
+  "exports": {
+    ".": {
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.cjs"
+    },
+    "./package.json": "./package.json"
+  },
+  "bin": {
+    "get-title-at-url": "./dist/cli.mjs"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}
+
+## fixture base
+http://127.0.0.1:<port>
+
+## home: title, url, status
+{
+  "title": "Example Domain",
+  "url": "http://127.0.0.1:<port>/",
+  "status": 200
+}
+
+## getting-started: esm destructure
+Example Domain
+
+## getting-started: cjs then
+Example Domain
+
+## getting-started: URL object input
+{
+  "title": "Getting started",
+  "url": "http://127.0.0.1:<port>/docs",
+  "status": 200
+}
+
+## api: INVALID_URL no scheme
+{
+  "error": {
+    "code": "INVALID_URL",
+    "message": "Invalid URL \"example.com\": expected an absolute http: or https: URL",
+    "status": "<undefined>",
+    "url": "example.com"
+  },
+  "url": "example.com",
+  "status": "<undefined>"
+}
+
+## api: INVALID_URL ftp
+{
+  "error": {
+    "code": "INVALID_URL",
+    "message": "Invalid URL \"ftp://example.com/file\": expected an absolute http: or https: URL",
+    "status": "<undefined>",
+    "url": "ftp://example.com/file"
+  },
+  "url": "ftp://example.com/file",
+  "status": "<undefined>"
+}
+
+## api: INVALID_URL empty
+{
+  "error": {
+    "code": "INVALID_URL",
+    "message": "Invalid URL \"\": expected an absolute http: or https: URL",
+    "status": "<undefined>",
+    "url": ""
+  },
+  "url": "",
+  "status": "<undefined>"
+}
+
+## api: INVALID_URL number (JS caller)
+{
+  "error": {
+    "code": "INVALID_URL",
+    "message": "Invalid URL \"42\": expected an absolute http: or https: URL",
+    "status": "<undefined>",
+    "url": "42"
+  },
+  "url": "42",
+  "status": "<undefined>"
+}
+
+## api: INVALID_URL long input is cut
+{
+  "urlLength": 201,
+  "endsWithEllipsis": true,
+  "messageLength": 257
+}
+
+## api: options that throw when read
+{
+  "error": {
+    "code": "NETWORK_ERROR",
+    "message": "Request failed: bad getter",
+    "status": "<undefined>",
+    "url": "http://127.0.0.1:<port>/"
+  },
+  "url": "http://127.0.0.1:<port>/",
+  "status": "<undefined>"
+}
+
+## api: HTTP_ERROR 404
+{
+  "error": {
+    "code": "HTTP_ERROR",
+    "message": "HTTP 404 Not Found",
+    "status": 404,
+    "url": "http://127.0.0.1:<port>/missing"
+  },
+  "url": "http://127.0.0.1:<port>/missing",
+  "status": 404
+}
+
+## api: HTTP_ERROR 500
+{
+  "error": {
+    "code": "HTTP_ERROR",
+    "message": "HTTP 500 Internal Server Error",
+    "status": 500,
+    "url": "http://127.0.0.1:<port>/broken"
+  },
+  "url": "http://127.0.0.1:<port>/broken",
+  "status": 500
+}
+
+## api: NETWORK_ERROR refused
+{
+  "error": {
+    "code": "NETWORK_ERROR",
+    "message": "Request failed: fetch failed (connect ECONNREFUSED 127.0.0.1:<port>)",
+    "status": "<undefined>",
+    "url": "http://127.0.0.1:<port>/"
+  },
+  "url": "http://127.0.0.1:<port>/",
+  "status": "<undefined>"
+}
+
+## api: NETWORK_ERROR redirect loop
+{
+  "error": {
+    "code": "NETWORK_ERROR",
+    "message": "Request failed: fetch failed (redirect count exceeded)",
+    "status": "<undefined>",
+    "url": "http://127.0.0.1:<port>/loop"
+  },
+  "url": "http://127.0.0.1:<port>/loop",
+  "status": "<undefined>"
+}
+
+## api: TIMEOUT
+{
+  "error": {
+    "code": "TIMEOUT",
+    "message": "Timed out after 200 ms",
+    "status": "<undefined>",
+    "url": "http://127.0.0.1:<port>/slow"
+  },
+  "url": "http://127.0.0.1:<port>/slow",
+  "status": "<undefined>"
+}
+
+## api: TIMEOUT from signal
+{
+  "error": {
+    "code": "TIMEOUT",
+    "message": "The request was aborted",
+    "status": "<undefined>",
+    "url": "http://127.0.0.1:<port>/slow"
+  },
+  "url": "http://127.0.0.1:<port>/slow",
+  "status": "<undefined>"
+}
+
+## api: signal already aborted
+{
+  "error": {
+    "code": "TIMEOUT",
+    "message": "The request was aborted",
+    "status": "<undefined>",
+    "url": "http://127.0.0.1:<port>/"
+  },
+  "url": "http://127.0.0.1:<port>/",
+  "status": "<undefined>"
+}
+
+## api: NOT_HTML json
+{
+  "error": {
+    "code": "NOT_HTML",
+    "message": "Expected an HTML page, got application/json",
+    "status": 200,
+    "url": "http://127.0.0.1:<port>/json"
+  },
+  "url": "http://127.0.0.1:<port>/json",
+  "status": 200
+}
+
+## api: NO_TITLE
+{
+  "error": {
+    "code": "NO_TITLE",
+    "message": "The page has no title",
+    "status": 200,
+    "url": "http://127.0.0.1:<port>/no-title"
+  },
+  "url": "http://127.0.0.1:<port>/no-title",
+  "status": 200
+}
+
+## api: error is GetTitleError and Error
+{
+  "instanceofGetTitleError": true,
+  "instanceofError": true,
+  "name": "GetTitleError",
+  "cjsClassSame": false
+}
+
+## api: network error cause
+{
+  "cause": "TypeError: fetch failed",
+  "causeCause": "Error: connect ECONNREFUSED 127.0.0.1:<port>"
+}
+
+## api: JSON.stringify(result) success
+{"title":"Example Domain","url":"http://127.0.0.1:<port>/","status":200}
+
+## api: JSON.stringify(result) failure
+{"error":{"name":"GetTitleError","code":"HTTP_ERROR","message":"HTTP 404 Not Found","status":404,"url":"http://127.0.0.1:<port>/missing"},"url":"http://127.0.0.1:<port>/missing","status":404}
+
+## api: new GetTitleError
+{
+  "json": "{\"name\":\"GetTitleError\",\"code\":\"NO_TITLE\",\"message\":\"custom\",\"status\":200,\"url\":\"https://example.com/\"}",
+  "message": "custom",
+  "code": "NO_TITLE"
+}
+
+## options: default headers
+{
+  "title": "get-title-at-url/3.0.0 (+https://github.com/m4bwav/get-title-at-url) || text/html,application/xhtml+xml;q=0.9,*/*;q=0.1",
+  "url": "http://127.0.0.1:<port>/echo-headers",
+  "status": 200
+}
+
+## options: default headers, as the server received them
+User-Agent: get-title-at-url/3.0.0 (+https://github.com/m4bwav/get-title-at-url)
+Accept: text/html,application/xhtml+xml;q=0.9,*/*;q=0.1
+
+## options: headers override user-agent (any case)
+{
+  "title": "my-bot/1.0 || text/html,application/xhtml+xml;q=0.9,*/*;q=0.1",
+  "url": "http://127.0.0.1:<port>/echo-headers",
+  "status": 200
+}
+
+## options: maxBytes too small
+{
+  "error": {
+    "code": "NO_TITLE",
+    "message": "The page has no title",
+    "status": 200,
+    "url": "http://127.0.0.1:<port>/late-title"
+  },
+  "url": "http://127.0.0.1:<port>/late-title",
+  "status": 200
+}
+
+## options: maxBytes default misses it
+{
+  "error": {
+    "code": "NO_TITLE",
+    "message": "The page has no title",
+    "status": 200,
+    "url": "http://127.0.0.1:<port>/late-title"
+  },
+  "url": "http://127.0.0.1:<port>/late-title",
+  "status": 200
+}
+
+## options: maxBytes 2 MB finds it
+{
+  "title": "Found late",
+  "url": "http://127.0.0.1:<port>/late-title",
+  "status": 200
+}
+
+## options: late-title page size
+154 (source); page bytes 1320060
+
+## options: maxBytes 0
+{
+  "error": {
+    "code": "NO_TITLE",
+    "message": "The page has no title",
+    "status": 200,
+    "url": "http://127.0.0.1:<port>/"
+  },
+  "url": "http://127.0.0.1:<port>/",
+  "status": 200
+}
+
+## options: timeout NaN uses default
+{
+  "title": "Example Domain",
+  "url": "http://127.0.0.1:<port>/",
+  "status": 200
+}
+
+## options: custom fetch (Response built by hand)
+{
+  "title": "From my fetch",
+  "url": "https://example.com/",
+  "status": 200
+}
+
+## options: custom fetch that throws
+{
+  "error": {
+    "code": "NETWORK_ERROR",
+    "message": "Request failed: proxy refused",
+    "status": "<undefined>",
+    "url": "https://example.com/"
+  },
+  "url": "https://example.com/",
+  "status": "<undefined>"
+}
+
+## options: no fetch in runtime
+{
+  "error": {
+    "code": "NETWORK_ERROR",
+    "message": "There is no fetch in this runtime; pass one as options.fetch",
+    "status": "<undefined>",
+    "url": "http://127.0.0.1:<port>/"
+  },
+  "url": "http://127.0.0.1:<port>/",
+  "status": "<undefined>"
+}
+
+## behaviour: redirect, final url
+{
+  "title": "Example Domain",
+  "url": "http://127.0.0.1:<port>/",
+  "status": 200
+}
+
+## behaviour: no content-type is read as HTML
+{
+  "title": "Served without a Content-Type",
+  "url": "http://127.0.0.1:<port>/no-content-type",
+  "status": 200
+}
+
+## behaviour: xhtml
+{
+  "title": "An XHTML page",
+  "url": "http://127.0.0.1:<port>/xhtml",
+  "status": 200
+}
+
+## behaviour: windows-1252 header
+{
+  "title": "“Curly” quotes",
+  "url": "http://127.0.0.1:<port>/windows-1252",
+  "status": 200
+}
+
+## behaviour: windows-1252 header, clean false
+“Curly” quotes – and € 5
+
+## behaviour: shift_jis meta
+{
+  "title": "太宰治 走れメロス",
+  "url": "http://127.0.0.1:<port>/shift-jis-meta",
+  "status": 200
+}
+
+## behaviour: utf-16 bom
+{
+  "title": "UTF-16 with a byte order mark",
+  "url": "http://127.0.0.1:<port>/utf16",
+  "status": 200
+}
+
+## behaviour: og:title fallback
+{
+  "title": "From og:title",
+  "url": "http://127.0.0.1:<port>/og-only",
+  "status": 200
+}
+
+## behaviour: twitter:title fallback
+{
+  "title": "From twitter:title",
+  "url": "http://127.0.0.1:<port>/twitter-only",
+  "status": 200
+}
+
+## behaviour: blank title falls back
+{
+  "title": "Fallback",
+  "url": "http://127.0.0.1:<port>/empty-title",
+  "status": 200
+}
+
+## behaviour: title over heading
+{
+  "title": "The real title",
+  "url": "http://127.0.0.1:<port>/heading-differs",
+  "status": 200
+}
+
+## behaviour: entities
+{
+  "title": "Tom & Jerry © 2026 … AT&T &nosuch;",
+  "url": "http://127.0.0.1:<port>/entities",
+  "status": 200
+}
+
+## behaviour: hidden titles skipped
+{
+  "title": "The document title",
+  "url": "http://127.0.0.1:<port>/hidden-titles",
+  "status": 200
+}
+
+## behaviour: whitespace collapsed
+{
+  "title": "Lots of space",
+  "url": "http://127.0.0.1:<port>/whitespace",
+  "status": 200
+}
+
+## behaviour: site suffix removed
+{
+  "title": "Getting started",
+  "url": "http://127.0.0.1:<port>/docs",
+  "status": 200
+}
+
+## behaviour: og:site_name prefix removed
+{
+  "title": "Getting started",
+  "url": "http://127.0.0.1:<port>/site-name-first",
+  "status": 200
+}
+
+## behaviour: short first part kept whole
+{
+  "title": "FAQ | Acme",
+  "url": "http://127.0.0.1:<port>/short",
+  "status": 200
+}
+
+## behaviour: hyphenated word kept
+{
+  "title": "Node-API docs",
+  "url": "http://127.0.0.1:<port>/hyphen",
+  "status": 200
+}
+
+## extract: readme clean
+"Getting started"
+
+## extract: readme clean false
+"Getting started | Acme Docs"
+
+## extract: none
+"<undefined>"
+
+## extract: empty string
+"<undefined>"
+
+## extract: home short part
+"Home"
+
+## extract: abc short part
+"API | Acme"
+
+## extract: each separator
+| => Release notes / - => Release notes / – => Release notes / — => Release notes / · => Release notes / » => Release notes / :: => Release notes
+
+## extract: spaced dash inside a real title
+"Pros"
+
+## extract: spaced dash, clean false
+"Pros – and cons"
+
+## extract: no spaces around separator
+"Release notes|Acme"
+
+## extract: several separators
+"Install"
+
+## extract: site name as suffix exact
+"Pricing"
+
+## extract: site name not matching
+"Pricing"
+
+## extract: site name case-insensitive
+"Pricing"
+
+## extract: title attribute order and case
+"Upper case tag"
+
+## extract: nbsp collapsed
+"A B"
+
+## extract: numeric 150 is windows-1252
+"A – B"
+
+## extract: unknown entity kept
+"Fish &chips; AT&T"
+
+## extract: first title wins
+"One"
+
+## extract: meta first tag wins
+"First"
+
+## extract: meta name vs property
+"og via name"
+
+## extract: unclosed title
+"<undefined>"
+
+## typescript: tsc nodenext
+exit 0 
+
+## commands: --help
+exit 0
+--- stdout
+
+  Get the title of the web page at a URL.
+
+  Usage
+    $ get-title-at-url <url> [--timeout <ms>] [--json]
+
+  Options
+    --timeout <ms>  Give up after this many milliseconds (default 10000)
+    --json          Print the whole result as JSON, even on failure
+    --help, -h      Show this help
+    --version, -v   Show the version
+
+  Exit codes
+    0  the title was printed
+    1  the page could not be fetched or has no title
+    2  bad usage
+
+  Example
+    $ get-title-at-url https://example.com/
+    Example Domain
+
+--- stderr
+
+
+## commands: --version
+exit 0
+--- stdout
+3.0.0
+--- stderr
+
+
+## commands: -v
+exit 0
+--- stdout
+3.0.0
+--- stderr
+
+
+## commands: title
+exit 0
+--- stdout
+Example Domain
+--- stderr
+
+
+## commands: --json success
+exit 0
+--- stdout
+{
+  "title": "Example Domain",
+  "url": "http://127.0.0.1:<port>/",
+  "status": 200
+}
+--- stderr
+
+
+## commands: --json failure
+exit 1
+--- stdout
+{
+  "error": {
+    "name": "GetTitleError",
+    "code": "HTTP_ERROR",
+    "message": "HTTP 404 Not Found",
+    "status": 404,
+    "url": "http://127.0.0.1:<port>/missing"
+  },
+  "url": "http://127.0.0.1:<port>/missing",
+  "status": 404
+}
+--- stderr
+
+
+## commands: no title
+exit 1
+--- stdout
+--- stderr
+error: The page has no title
+
+
+## commands: not html
+exit 1
+--- stdout
+--- stderr
+error: Expected an HTML page, got application/json
+
+
+## commands: invalid url
+exit 1
+--- stdout
+--- stderr
+error: Invalid URL "example.com": expected an absolute http: or https: URL
+
+
+## commands: timeout
+exit 1
+--- stdout
+--- stderr
+error: Timed out after 200 ms
+
+
+## commands: bad timeout
+exit 2
+--- stdout
+--- stderr
+error: --timeout takes a positive number of milliseconds, not "soon"
+
+  Get the title of the web page at a URL.
+
+  Usage
+    $ get-title-at-url <url> [--timeout <ms>] [--json]
+
+  Options
+    --timeout <ms>  Give up after this many milliseconds (default 10000)
+    --json          Print the whole result as JSON, even on failure
+    --help, -h      Show this help
+    --version, -v   Show the version
+
+  Exit codes
+    0  the title was printed
+    1  the page could not be fetched or has no title
+    2  bad usage
+
+  Example
+    $ get-title-at-url https://example.com/
+    Example Domain
+
+
+
+## commands: zero timeout
+exit 2
+--- stdout
+--- stderr
+error: --timeout takes a positive number of milliseconds, not "0"
+
+  Get the title of the web page at a URL.
+
+  Usage
+    $ get-title-at-url <url> [--timeout <ms>] [--json]
+
+  Options
+    --timeout <ms>  Give up after this many milliseconds (default 10000)
+    --json          Print the whole result as JSON, even on failure
+    --help, -h      Show this help
+    --version, -v   Show the version
+
+  Exit codes
+    0  the title was printed
+    1  the page could not be fetched or has no title
+    2  bad usage
+
+  Example
+    $ get-title-at-url https://example.com/
+    Example Domain
+
+
+
+## commands: no url
+exit 2
+--- stdout
+--- stderr
+error: a URL is required
+
+  Get the title of the web page at a URL.
+
+  Usage
+    $ get-title-at-url <url> [--timeout <ms>] [--json]
+
+  Options
+    --timeout <ms>  Give up after this many milliseconds (default 10000)
+    --json          Print the whole result as JSON, even on failure
+    --help, -h      Show this help
+    --version, -v   Show the version
+
+  Exit codes
+    0  the title was printed
+    1  the page could not be fetched or has no title
+    2  bad usage
+
+  Example
+    $ get-title-at-url https://example.com/
+    Example Domain
+
+
+
+## commands: two urls
+exit 2
+--- stdout
+--- stderr
+error: give one URL at a time
+
+  Get the title of the web page at a URL.
+
+  Usage
+    $ get-title-at-url <url> [--timeout <ms>] [--json]
+
+  Options
+    --timeout <ms>  Give up after this many milliseconds (default 10000)
+    --json          Print the whole result as JSON, even on failure
+    --help, -h      Show this help
+    --version, -v   Show the version
+
+  Exit codes
+    0  the title was printed
+    1  the page could not be fetched or has no title
+    2  bad usage
+
+  Example
+    $ get-title-at-url https://example.com/
+    Example Domain
+
+
+
+## commands: unknown option
+exit 2
+--- stdout
+--- stderr
+error: Unknown option '--verbose'. To specify a positional argument starting with a '-', place it at the end of the command after '--', as in '-- "--verbose"
+
+  Get the title of the web page at a URL.
+
+  Usage
+    $ get-title-at-url <url> [--timeout <ms>] [--json]
+
+  Options
+    --timeout <ms>  Give up after this many milliseconds (default 10000)
+    --json          Print the whole result as JSON, even on failure
+    --help, -h      Show this help
+    --version, -v   Show the version
+
+  Exit codes
+    0  the title was printed
+    1  the page could not be fetched or has no title
+    2  bad usage
+
+  Example
+    $ get-title-at-url https://example.com/
+    Example Domain
+
+
+
+## commands: timeout equals form
+exit 0
+--- stdout
+Example Domain
+--- stderr
+
+
+## recipes: many urls, four at a time
+[
+  'Example Domain',
+  'Getting started',
+  'HTTP_ERROR',
+  'From og:title',
+  'NOT_HTML'
+]
+
+## recipes: retry, the result
+{
+  "title": "Worked on try two",
+  "url": "http://127.0.0.1:<port>/flaky",
+  "status": 200
+}
+
+## recipes: retry
+{
+  "requests": 2
+}
+
+## recipes: test double, as the REPL prints it
+{ title: 'Shop', url: 'https://shop.test/', status: 200 }
+'HTTP 404 Not Found'
+
+## recipes: test double
+[
+  {
+    "title": "Shop",
+    "url": "https://shop.test/",
+    "status": 200
+  },
+  {
+    "error": {
+      "code": "HTTP_ERROR",
+      "message": "HTTP 404 Not Found",
+      "status": 404,
+      "url": "https://shop.test/gone"
+    },
+    "url": "https://shop.test/gone",
+    "status": 404
+  }
+]
+
+## recipes: markdown link
+[Getting started](http://127.0.0.1:<port>/docs)
+[http://127.0.0.1:<port>/no-title](http://127.0.0.1:<port>/no-title)
+
+## recipes: keep the whole title
+Getting started | Acme Docs
+
+## recipes: shell loop
+exit 0
+http://127.0.0.1:<port>/	Example Domain
+http://127.0.0.1:<port>/missing	(no title)
+http://127.0.0.1:<port>/docs	Getting started
+
+
+## v2: import 2.0.0 (threw)
+SyntaxError: The requested module 'cheerio' does not provide an export named 'default'
+
+## v2: installed cheerio
+1.2.0
+
+## v1: typeof export
+function
+
+## v1: callback (title, error)
+{
+  "title": "Getting started",
+  "error": "null"
+}
+
+## v1: heading page
+{
+  "title": "The real title",
+  "error": "null"
+}
+
+## v1: 404
+{
+  "title": "<undefined>",
+  "error": "404"
+}
+
+## requests the fixture server saw
+84
+

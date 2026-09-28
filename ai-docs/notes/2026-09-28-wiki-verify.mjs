@@ -18,6 +18,7 @@ import {spawn} from 'node:child_process';
 import {createRequire} from 'node:module';
 import {readFileSync, writeFileSync} from 'node:fs';
 import path from 'node:path';
+import util from 'node:util';
 
 const PACKAGE = 'get-title-at-url';
 const VERSION = '3.0.0';
@@ -269,6 +270,11 @@ await capture('api: new GetTitleError', async () => {
 
 // ===== options =====
 await capture('options: default headers', async () => getTitleAtUrl(`${base}/echo-headers`));
+// The API reference shows the two headers as request lines; the fixture echoes them into the title.
+await capture('options: default headers, as the server received them', async () => {
+	const [userAgent, accept] = (await getTitleAtUrl(`${base}/echo-headers`)).title.split(' || ');
+	return `User-Agent: ${userAgent}\nAccept: ${accept}`;
+});
 await capture('options: headers override user-agent (any case)', async () => getTitleAtUrl(`${base}/echo-headers`, {headers: {'User-Agent': 'my-bot/1.0'}}));
 await capture('options: maxBytes too small', async () => brief(await getTitleAtUrl(`${base}/late-title`, {maxBytes: 65_536})));
 await capture('options: maxBytes default misses it', async () => brief(await getTitleAtUrl(`${base}/late-title`)));
@@ -422,7 +428,8 @@ await capture('recipes: many urls, four at a time', async () => {
 
 	const urls = ['/', '/docs', '/missing', '/og-only', '/json'].map(p => `${base}${p}`);
 	const results = await titles(urls);
-	return results.map(r => r.title ?? `${r.error.code}`);
+	// Printed as console.log prints it, because the Recipes page shows console.log output (wikiwright L-008).
+	return util.inspect(results.map(r => r.title ?? `${r.error.code}`));
 });
 
 await capture('recipes: retry', async () => {
@@ -448,7 +455,8 @@ await capture('recipes: retry', async () => {
 	}
 
 	const result = await getTitleWithRetry(`${base}/flaky`);
-	return {result, requests: flakyCalls};
+	show('recipes: retry, the result', result);
+	return {requests: flakyCalls};
 });
 
 await capture('recipes: test double', async () => {
@@ -456,6 +464,11 @@ await capture('recipes: test double', async () => {
 	const fakeFetch = async url => pages.has(url)
 		? new Response(pages.get(url), {headers: {'content-type': 'text/html'}})
 		: new Response('', {status: 404, statusText: 'Not Found'});
+	// The page shows these as //=> lines, in the form Node's REPL and console.log print them.
+	show('recipes: test double, as the REPL prints it', [
+		util.inspect(await getTitleAtUrl('https://shop.test/', {fetch: fakeFetch})),
+		util.inspect((await getTitleAtUrl('https://shop.test/gone', {fetch: fakeFetch})).error.message),
+	].join('\n'));
 	return [
 		await getTitleAtUrl('https://shop.test/', {fetch: fakeFetch}),
 		brief(await getTitleAtUrl('https://shop.test/gone', {fetch: fakeFetch})),
