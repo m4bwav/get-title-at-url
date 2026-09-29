@@ -15,11 +15,16 @@
 // node.exe first on PATH, because the shell-loop case runs `node` from a spawned bash.
 // Updated 2026-09-29: the windows-1252 recipe cases (TextDecoderStream, and the plain
 // TextDecoder decode that is latin1 on Node 20.20.2 and 24.13.0).
+// Updated 2026-09-29 (third update): the proxy recipe, through a local forward proxy that
+// forwards only to the fixture server. Install undici at its current latest and undici 7
+// beside the package: `npm install undici undici7@npm:undici@7` (without them those cases
+// print "(threw)"). The output names both undici versions and Node's own.
 //
 // Every case prints "## <label>" and then its output. The package talks only to the
 // local fixture server below, never the internet.
 
 import http from 'node:http';
+import net from 'node:net';
 import {spawn} from 'node:child_process';
 import {createRequire} from 'node:module';
 import {readFileSync, writeFileSync} from 'node:fs';
@@ -546,6 +551,95 @@ show('recipes: shell loop', await new Promise(resolve => {
 		resolve(`exit ${code}\n${out}`);
 	});
 }));
+
+// ===== Recipes: through a proxy (added 2026-09-29, third update) =====
+// undici's current major moves without a release of this package (wikiwright L-131), so both
+// the page's form (fetch and ProxyAgent from undici) and the old form (Node's own fetch with
+// undici's ProxyAgent) run with undici at its latest and with undici 7. The local proxy
+// handles absolute-form requests (undici 8) and CONNECT (undici 7), and refuses any target
+// that is not the fixture server, so nothing leaves 127.0.0.1.
+const fixtureHost = `127.0.0.1:${server.address().port}`;
+const proxied = [];
+const proxy = http.createServer((request, response) => {
+	proxied.push(`${request.method} ${request.url}`);
+	const target = new URL(request.url);
+	if (target.host !== fixtureHost) {
+		response.writeHead(403);
+		response.end();
+		return;
+	}
+
+	const upstream = http.request({host: target.hostname, port: target.port, path: target.pathname + target.search, method: request.method, headers: request.headers}, answer => {
+		response.writeHead(answer.statusCode, answer.headers);
+		answer.pipe(response);
+	});
+	request.pipe(upstream);
+});
+proxy.on('connect', (request, socket, head) => {
+	proxied.push(`CONNECT ${request.url}`);
+	if (request.url !== fixtureHost) {
+		socket.end('HTTP/1.1 403 Forbidden\r\n\r\n');
+		return;
+	}
+
+	const [host, port] = request.url.split(':');
+	const upstream = net.connect(Number(port), host, () => {
+		socket.write('HTTP/1.1 200 Connection Established\r\n\r\n');
+		upstream.write(head);
+		upstream.pipe(socket);
+		socket.pipe(upstream);
+	});
+	upstream.on('error', () => socket.destroy());
+});
+await new Promise(resolve => {
+	proxy.listen(0, '127.0.0.1', resolve);
+});
+const proxyUrl = `http://127.0.0.1:${proxy.address().port}`;
+const proxySaw = () => proxied.splice(0).map(line => line.replaceAll(fixtureHost, '<fixture>')).join(', ') || '(nothing)';
+// The page's //=> is one line for https://example.com/; the longer fixture address would make
+// util.inspect break it over lines, so print it on one line as the REPL does for the page's address.
+const oneLine = value => util.inspect(value, {breakLength: Number.POSITIVE_INFINITY});
+const installedVersion = name => {
+	try {
+		return JSON.parse(readFileSync(path.join('node_modules', name, 'package.json'), 'utf8')).version;
+	} catch {
+		return 'not installed';
+	}
+};
+
+show('recipes: proxy, undici versions', `undici ${installedVersion('undici')}, undici7 ${installedVersion('undici7')}, Node's own undici ${process.versions.undici}`);
+for (const name of ['undici', 'undici7']) {
+	// The page's code: fetch and ProxyAgent both from undici.
+	// eslint-disable-next-line no-await-in-loop
+	await capture(`recipes: proxy, fetch and ProxyAgent from ${name}`, async () => {
+		const {fetch: undiciFetch, ProxyAgent} = await import(name);
+		const dispatcher = new ProxyAgent(proxyUrl);
+		try {
+			const result = await getTitleAtUrl(`${base}/`, {
+				fetch: (url, init) => undiciFetch(url, {...init, dispatcher}),
+			});
+			return `${oneLine(result)}\nproxy saw: ${proxySaw()}`;
+		} finally {
+			await dispatcher.close();
+		}
+	});
+	// The form the page showed until 2026-09-29: Node's own fetch with undici's ProxyAgent.
+	// eslint-disable-next-line no-await-in-loop
+	await capture(`recipes: proxy, Node's fetch with ProxyAgent from ${name}`, async () => {
+		const {ProxyAgent} = await import(name);
+		const dispatcher = new ProxyAgent(proxyUrl);
+		try {
+			const result = await getTitleAtUrl(`${base}/`, {
+				fetch: (url, init) => fetch(url, {...init, dispatcher}),
+			});
+			return `${oneLine(brief(result))}\nproxy saw: ${proxySaw()}`;
+		} finally {
+			await dispatcher.close();
+		}
+	});
+}
+
+proxy.close();
 
 // ===== Versions and upgrading: the old majors =====
 if (process.env.V2) {

@@ -4,8 +4,8 @@ kind: note
 date: 2026-09-28
 verified: 2026-09-29
 stale_after: 2027-03-28
-tags: [wiki, docs, 3.0.0, github, wikiwright, node-20, windows-1252]
-summary: "the nine wiki pages, where their git working copy is, how every example was verified against the published 3.0.0 on Node 24 and Node 20 (the script beside this note), the 2026-09-29 windows-1252 recipe fix (TextDecoder is latin1 on Node 20.20.2 and 24.13.0; TextDecoderStream is right on all four lines run), the facts the README lacks, four inaccuracies in the shipped README and CHANGELOG, and how to update the wiki at the next release; read before touching the wiki, the README's NOT_HTML row or site-name paragraph, or the CHANGELOG's exit-code line"
+tags: [wiki, docs, 3.0.0, github, wikiwright, node-20, windows-1252, undici, proxy]
+summary: "the nine wiki pages, where their git working copy is, how every example was verified against the published 3.0.0 on Node 24 and Node 20 (the script beside this note), the 2026-09-29 windows-1252 recipe fix (TextDecoder is latin1 on Node 20.20.2 and 24.13.0; TextDecoderStream is right on all four lines run), the third update (the proxy recipe broken by undici 8, now fetch from undici; the decoder claim scoped to the one-shot decode on 20.18.3+, 22.13.0 to 22.22.0 and 24.0.0 to 24.13.0), the facts the README lacks, five inaccuracies in the shipped README and CHANGELOG, and how to update the wiki at the next release; read before touching the wiki, the README's NOT_HTML row or site-name paragraph, or the CHANGELOG's exit-code line"
 ---
 
 # GitHub wiki for 3.0.0
@@ -27,7 +27,7 @@ The wiki feature had been switched on earlier the same day (`gh repo edit --enab
 ## Updating the wiki later
 
 1. `git -C D:\m4bwa\Claude\Projects\Ai\get-title-at-url.wiki pull --ff-only`, then edit the pages.
-2. Re-verify: copy `2026-09-28-wiki-verify.mjs` to a scratch folder outside the repository, set `VERSION` in it, `npm init -y`, `npm install get-title-at-url@<new> typescript@6`, then run it with `V2=<folder>` and `V1=<folder>` pointing at scratch folders holding `get-title-at-url@2.0.0` and `@1.1.8` (without them the Versions page's old-major outputs are missing), and save its stdout as `out.txt`. Run it again on the oldest Node line in `engines` (20 for 3.x) and compare with `2026-09-28-wiki-verify.node20.out.txt` (how: "Updated 2026-09-29" below). Outputs name the fixture as `http://127.0.0.1:<port>`; the pages show it as `https://example.com/` (Home says so).
+2. Re-verify: copy `2026-09-28-wiki-verify.mjs` to a scratch folder outside the repository, set `VERSION` in it, `npm init -y`, `npm install get-title-at-url@<new> typescript@6 undici undici7@npm:undici@7` (undici unpinned, at its current latest: the proxy recipe depends on it, see "third update" below), then run it with `V2=<folder>` and `V1=<folder>` pointing at scratch folders holding `get-title-at-url@2.0.0` and `@1.1.8` (without them the Versions page's old-major outputs are missing), and save its stdout as `out.txt`. Run it again on the oldest Node line in `engines` (20 for 3.x) and compare with `2026-09-28-wiki-verify.node20.out.txt` (how: "Updated 2026-09-29" below). Outputs name the fixture as `http://127.0.0.1:<port>`; the pages show it as `https://example.com/` (Home says so).
 3. Compare mechanically, not by eye: `python <wikiwright>/scripts/wikiwright.py outputs <wiki dir> out.txt` lists every output block and `//=>` value on a page that the run did not print (it maps the fixture address to `https://example.com` and ignores the port). Then diff `out.txt` with `2026-09-28-wiki-verify.out.txt` beside this note, after replacing `127.0.0.1:<digits>` with `127.0.0.1:<port>`: every difference is a behaviour change to put on the pages. Save the new output over it with the ports replaced.
 4. `python <wikiwright>/scripts/wikiwright.py check <wiki dir> --version <new>` and the everwrite checker.
 5. Commit, `git push`, `wikiwright.py live m4bwav/get-title-at-url <wiki dir>`.
@@ -56,11 +56,28 @@ The first real update-mode run (wikiwright L-106 `oldest-node-run`), still again
 
 **How to run another Node line** (Git Bash): `npx -y -p node@20 node -p process.execPath` downloads it, but its `bin` folder also holds a text file named `node` ("This file intentionally left blank"), and Git Bash then skips the folder, so putting it first on PATH silently runs the system Node. Copy `node.exe` alone into a scratch folder and put that folder first on PATH; the script's `installed` line shows which Node ran. `wikiwright.py diffout` crashes printing C1 controls on a cp1252 console (`UnicodeEncodeError`); set `PYTHONIOENCODING=utf-8`.
 
+## Updated 2026-09-29 (third update)
+
+Update mode again for the unchanged 3.0.0, fixing two wrong claims (wikiwright L-106 `oldest-node-run`, L-131 `recipe-deps-drift`). Wiki commit `1e449b2` (`fdca908..1e449b2`).
+
+**How titles are found.** The page said Node's `TextDecoder` is wrong for windows-1252 "on Node 20 and some Node 22 and 24 releases". Too broad twice over: Node 20.0 to 20.18.2 decode correctly (the Latin-1 fast path, nodejs/node PR 55275, arrived in 20.18.3, 22.13.0 and 23.4.0, per Node's CHANGELOG_V20.md, checked today), and only the one-shot `decode()` is affected (the saved Node 20.20.2 output: one-shot decode gives C1 controls and equals Buffer latin1, `decode(bytes, {stream: true})` gives the right text). The paragraph now names the range, links issue 56542 ("TextDecoder incorrectly decodes 0x92 and several other characters for Windows-1252", closed 2025-12-04) and PR 60893 ("src: implement Windows-1252 encoding support...", merged 2025-12-04, in 22.22.1, 24.13.1, 25.4.0), both checked with `gh api`. Wording carried from the eval draft in `ww7/suite/action-3-r1`, with "earlier releases decode correctly" added.
+
+**Recipes, "Through a proxy or with a custom agent".** The recipe (undici's `ProxyAgent` passed to Node's built-in `fetch`, marked "not tested") failed once run: `npm install undici` now gives 8.11.2, and with Node's `fetch` every call returned `NETWORK_ERROR` `Request failed: fetch failed (invalid onRequestStart method)` on Node 22.23.3 and 24.18.0 (Node's own undici 6.28.1 and 7.28.0). undici 8 (engines `>=22.19.0`) does not import on Node 20.20.2: `TypeError: webidl.util.markAsUncloneable is not a function`. The page now imports `fetch` and `ProxyAgent` from undici, shows the `//=>` result, scopes the block `<!-- outputs: node>=22 -->`, tells Node 20 users to install `undici@7`, warns against the old form, and says `https:` through a proxy was not tested. Footer date was already 2026-09-29.
+
+**Script changes.** A new section "Recipes: through a proxy": a local forward proxy (absolute-form requests and CONNECT; it refuses any target but the fixture server, so nothing leaves 127.0.0.1), then for `undici` (latest) and `undici7` (`npm:undici@7`): the page's form and the old form, printed on one line with `util.inspect(..., {breakLength: Infinity})`, with what the proxy saw. A line `recipes: proxy, undici versions` prints both undici versions and `process.versions.undici`.
+
+**Runs** (scratch `C:\Users\m4bwa\AppData\Local\Temp\ww8\gt`, `get-title-at-url@3.0.0`, typescript 6.0.3, undici 8.11.2, undici7 7.30.0, 2.0.0 and 1.1.8 in their own folders, npm 11.16.0; Node 20.20.2 and 22.23.3 `node.exe` from `npx -p node@<major>` copied alone and put first on PATH):
+
+- `diffout` against the saved outputs: Node 24.18.0 121 sections, 115 same, 1 changed (`requests the fixture server saw` 85 to 88), 5 added (the proxy cases); Node 20.20.2 the same shape (85 to 87; both undici 8 cases threw).
+- Node 22.23.3 against the new Node 24.18.0 output: 119 of 121 same (`installed`, Node's own undici version); not saved.
+- Page form: 24.18.0 and 22.23.3 with undici 8.11.2 `{ title: 'Example Domain', ... status: 200 }`, proxy saw `GET http://<fixture>/`; undici 7.30.0 the same on all three lines, proxy saw `CONNECT <fixture>`. Old form: undici 8 `NETWORK_ERROR` on 22 and 24; undici 7 works on 20, 22 and 24.
+- Saved both outputs through `diffout --save`. `outputs` with both: 35 checked, 0 missing, 1 skipped. `check --version 3.0.0`: 0 errors, 0 warnings. `live`: 9 pages, 0 failures, sidebar and footer rendered; the new text is on the live pages. Everwrite: 0 strong, 10 weak (two new long sentences were split).
+
 ## How the examples were verified
 
 Scratch project in the session scratchpad: `npm install get-title-at-url@3.0.0 typescript@6` (npm 11.16, Node 24.18.0, Windows 11). The script imports the package both ways, runs the published bin with `node` (asynchronously: `spawnSync` would block the in-process fixture server), compiles a TypeScript narrowing example with `tsc --strict --module nodenext`, runs a bash loop over the bin, and runs 2.0.0 and 1.1.8 from their own scratch installs. `npx get-title-at-url --version` printed `3.0.0`; an empty project's `npm install get-title-at-url@3.0.0` printed "added 1 package". The repository's own `npm test` passed 186 of 186.
 
-Not run: pnpm, yarn, Bun and Deno (not installed here; the pages say so and point at verify-published, which runs Bun and Deno), browsers and edge runtimes, the undici `ProxyAgent` recipe, the server-side address-check pattern.
+Not run: pnpm, yarn, Bun and Deno (not installed here; the pages say so and point at verify-published, which runs Bun and Deno), browsers and edge runtimes, the server-side address-check pattern. (The undici `ProxyAgent` recipe has run since the third update of 2026-09-29, for an `http:` page only.)
 
 ## Facts verified while writing (not in the README)
 
@@ -85,6 +102,7 @@ Not run: pnpm, yarn, Bun and Deno (not installed here; the pages say so and poin
 2. README, "How the title is chosen", step 4: "When the page declares `og:site_name`, exactly that name is removed ... Otherwise the title is split at separators". The split also runs when `og:site_name` is declared but does not match the title. Add "or the name does not match".
 3. CHANGELOG, 3.0.0 Added: "exit codes 0 (title printed), 1 (no title) and 2 (bad usage)". Exit 1 is every failure to get a title (HTTP error, network, timeout, invalid URL, not HTML, no title), as the CLI's own help says ("the page could not be fetched or has no title").
 4. README, CLI section: the help text shown is a shortened copy; the real `--help` also has "Exit codes" and "Example" sections and a first line. Minor; either paste the real output or say it is an excerpt.
+5. CHANGELOG, 3.0.0 Added (found 2026-09-29): "(Node 20's own decoder gets them wrong)". Too broad: Node 20.0 to 20.18.2 decode windows-1252 correctly, the bug is in 20.18.3 and later 20.x, 22.13.0 to 22.22.0 and 24.0.0 to 24.13.0, and only the one-shot `decode()` is affected. Suggested: "(Node's own one-shot decoder gets them wrong on 20.18.3 and later 20.x, 22.13 to 22.22 and 24.0 to 24.13)".
 
 Worth adding at the next README change (omissions, not errors): the spaced-dash cut, the `instanceof` hazard across builds, and that 2.0.0 no longer imports. Recommended to Mark, his call: deprecate 2.0.0 on npm (it still gets about 60 downloads a week and throws on import), for example `npm deprecate get-title-at-url@2.0.0 "2.0.0 fails to import since cheerio 1.0.0 (2024); use 3.x"`.
 
