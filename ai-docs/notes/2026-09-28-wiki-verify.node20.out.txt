@@ -872,6 +872,23 @@ http://127.0.0.1:<port>/missing	(no title)
 http://127.0.0.1:<port>/docs	Getting started
 
 
+## recipes: proxy, undici versions
+undici 8.11.2, undici7 7.30.0, Node's own undici 6.24.1
+
+## recipes: proxy, fetch and ProxyAgent from undici (threw)
+TypeError: webidl.util.markAsUncloneable is not a function
+
+## recipes: proxy, Node's fetch with ProxyAgent from undici (threw)
+TypeError: webidl.util.markAsUncloneable is not a function
+
+## recipes: proxy, fetch and ProxyAgent from undici7
+{ title: 'Example Domain', url: 'http://127.0.0.1:<port>/', status: 200 }
+proxy saw: CONNECT <fixture>
+
+## recipes: proxy, Node's fetch with ProxyAgent from undici7
+{ title: 'Example Domain', url: 'http://127.0.0.1:<port>/', status: 200 }
+proxy saw: CONNECT <fixture>
+
 ## v2: import 2.0.0 (threw)
 SyntaxError: The requested module 'cheerio' does not provide an export named 'default'
 
@@ -900,4 +917,4 @@ function
 }
 
 ## requests the fixture server saw
-85
+87
