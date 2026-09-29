@@ -2,10 +2,10 @@
 title: GitHub wiki written and published for 3.0.0
 kind: note
 date: 2026-09-28
-verified: 2026-09-28
+verified: 2026-09-29
 stale_after: 2027-03-28
-tags: [wiki, docs, 3.0.0, github, wikiwright]
-summary: "the nine wiki pages, where their git working copy is, how every example was verified against the published 3.0.0 (the script beside this note), the facts the README lacks, four inaccuracies in the shipped README and CHANGELOG, and how to update the wiki at the next release; read before touching the wiki, the README's NOT_HTML row or site-name paragraph, or the CHANGELOG's exit-code line"
+tags: [wiki, docs, 3.0.0, github, wikiwright, node-20, windows-1252]
+summary: "the nine wiki pages, where their git working copy is, how every example was verified against the published 3.0.0 on Node 24 and Node 20 (the script beside this note), the 2026-09-29 windows-1252 recipe fix (TextDecoder is latin1 on Node 20.20.2 and 24.13.0; TextDecoderStream is right on all four lines run), the facts the README lacks, four inaccuracies in the shipped README and CHANGELOG, and how to update the wiki at the next release; read before touching the wiki, the README's NOT_HTML row or site-name paragraph, or the CHANGELOG's exit-code line"
 ---
 
 # GitHub wiki for 3.0.0
@@ -27,12 +27,34 @@ The wiki feature had been switched on earlier the same day (`gh repo edit --enab
 ## Updating the wiki later
 
 1. `git -C D:\m4bwa\Claude\Projects\Ai\get-title-at-url.wiki pull --ff-only`, then edit the pages.
-2. Re-verify: copy `2026-09-28-wiki-verify.mjs` to a scratch folder outside the repository, set `VERSION` in it, `npm init -y`, `npm install get-title-at-url@<new> typescript@6`, then run it with `V2=<folder>` and `V1=<folder>` pointing at scratch folders holding `get-title-at-url@2.0.0` and `@1.1.8` (without them the Versions page's old-major outputs are missing), and save its stdout as `out.txt`. Outputs name the fixture as `http://127.0.0.1:<port>`; the pages show it as `https://example.com/` (Home says so).
+2. Re-verify: copy `2026-09-28-wiki-verify.mjs` to a scratch folder outside the repository, set `VERSION` in it, `npm init -y`, `npm install get-title-at-url@<new> typescript@6`, then run it with `V2=<folder>` and `V1=<folder>` pointing at scratch folders holding `get-title-at-url@2.0.0` and `@1.1.8` (without them the Versions page's old-major outputs are missing), and save its stdout as `out.txt`. Run it again on the oldest Node line in `engines` (20 for 3.x) and compare with `2026-09-28-wiki-verify.node20.out.txt` (how: "Updated 2026-09-29" below). Outputs name the fixture as `http://127.0.0.1:<port>`; the pages show it as `https://example.com/` (Home says so).
 3. Compare mechanically, not by eye: `python <wikiwright>/scripts/wikiwright.py outputs <wiki dir> out.txt` lists every output block and `//=>` value on a page that the run did not print (it maps the fixture address to `https://example.com` and ignores the port). Then diff `out.txt` with `2026-09-28-wiki-verify.out.txt` beside this note, after replacing `127.0.0.1:<digits>` with `127.0.0.1:<port>`: every difference is a behaviour change to put on the pages. Save the new output over it with the ports replaced.
 4. `python <wikiwright>/scripts/wikiwright.py check <wiki dir> --version <new>` and the everwrite checker.
 5. Commit, `git push`, `wikiwright.py live m4bwav/get-title-at-url <wiki dir>`.
 
 **Rehearsed 2026-09-28** (wikiwright 0.2.0, update mode against the unchanged 3.0.0): the saved script ran clean (112 cases, 3.0.0, 2.0.0 and 1.1.8), and every value on the pages matched a value it printed. It did not reproduce five page outputs verbatim, all presentation: Recipes' concurrency output in `console.log` form (the script printed JSON), the retry result (printed inside a wrapper), the test double's `//=>` line (written as a JS literal; Node prints `{ title: 'Shop', ... }` with spaces), the default headers as request lines (the fixture echoes them into a title), and npm's install output on Getting started (never from the script, and it has a timing). The script now prints the first four as the pages show them; the Recipes line was changed to Node's form and the npm block carries `<!-- outputs: skip -->` (wiki commit `2807e56`). The output is saved as `2026-09-28-wiki-verify.out.txt`. `wikiwright.py outputs`: 30 checked, 0 missing, 1 skipped. Before this, step 2 said "compare with the pages" with no saved output to diff against and no check that would notice a page output the script never printed. Pages that name the version: Home (last line), API reference (the default User-Agent), Commands (`--version` output), Versions and upgrading (table, download counts, support line), FAQ (User-Agent), Development (the install line in the last section), the footer. Getting started names none.
+
+## Updated 2026-09-29: the windows-1252 recipe, and the Node 20 run
+
+The first real update-mode run (wikiwright L-106 `oldest-node-run`), still against 3.0.0. Wiki commit `fdca908` (`2807e56..fdca908`).
+
+**What was wrong.** Recipes, "Keep the whole title", told readers to "decode the bytes with the right `TextDecoder` first" for legacy encodings. For windows-1252 that is wrong on some Node lines: the script's case `behaviour: windows-1252 header, clean false` (which did exactly that) printed `“Curly” quotes – and € 5` on Node 24.18.0 but the C1 controls U+0093, U+0094, U+0096 and U+0080 in place of the quotes, dash and euro sign on Node 20.20.2 (engines says `>=20`).
+
+**What decodes windows-1252 correctly, 2026-09-29, Windows 11.** On Node 20.20.2 and 24.13.0, `new TextDecoder('windows-1252').decode(bytes)` equals `Buffer.from(bytes).toString('latin1')` (so it really is latin1 there; the labels `cp1252`, `latin1`, `iso-8859-1`, `us-ascii` and `ascii` do the same, from a side probe). `TextDecoderStream('windows-1252')` and `decoder.decode(bytes, {stream: true})` gave the right text on all four lines run: 20.20.2, 22.23.3, 24.13.0 and 24.18.0 (the Latin-1 fast path only serves the one-shot `decode`). 22.23.3 and 24.18.0 decode correctly either way, as the v4 research note's fix range (22.22.1, 24.13.1) predicts. `getTitleAtUrl` returned `“Curly” quotes` on all four.
+
+**Page changes.** Recipes now shows the `TextDecoderStream` loop with its `//=>` output, says which Node versions printed it, and warns that the one-shot decode gave the four control characters on 20.20.2 and 24.13.0. How titles are found links to that recipe (one sentence). Footer date 2026-09-29.
+
+**Script changes** (`2026-09-28-wiki-verify.mjs`). It now changes to its own folder (`process.chdir`), so it runs as `node <scratch>/wiki-verify.mjs` with no `cd`. The case `behaviour: windows-1252 header, clean false` is replaced by `recipes: keep the whole title, windows-1252` (the page's code, printed with `util.inspect` as the `//=>` line shows it) and `recipes: windows-1252, TextDecoder.decode compared` (the one-shot decode with C1 controls shown as `<U+XXXX>`, whether it equals `Buffer` latin1, and the `{stream: true}` decode).
+
+**Runs** (`get-title-at-url@3.0.0`, 2.0.0 and 1.1.8 from npm in scratch folders, npm 11.16.0):
+
+- Before the fix, unchanged script: Node 24.18.0 `diffout` against the saved output 115 sections, 115 same; Node 20.20.2 113 same, 2 changed (`installed`, and the windows-1252 clean false case with the C1 controls).
+- After the fix, against the old saved output: Node 24.18.0 113 same, 1 changed (`requests the fixture server saw` 84 to 85), 2 added, 1 removed. Node 20.20.2, 24.13.0 and 22.23.3: the same plus `installed`; the compared case printed `<U+0093>Curly<U+0094> quotes <U+0096> and <U+0080> 5` and `same as Buffer latin1: true` on 20.20.2 and 24.13.0, the right text and `false` on 22.23.3 and 24.18.0.
+- Node 20.20.2 against the new saved Node 24.18.0 output: 116 sections, 114 same, 2 changed (`installed` and the compared case). Nothing else in the package, the CLI, the TypeScript case or the bash loop differs on Node 20.
+- Saved: `2026-09-28-wiki-verify.out.txt` (Node 24.18.0, replaced) and `2026-09-28-wiki-verify.node20.out.txt` (Node 20.20.2), both through `wikiwright.py diffout --save` (ports as `<port>`). 24.13.0 and 22.23.3 were run but not saved.
+- `wikiwright.py outputs` with either saved output: 34 checked, 0 missing, 1 skipped. `check --version 3.0.0`: 0 errors, 0 warnings. `live`: 9 pages, 0 failures, sidebar and footer rendered. Everwrite: 0 strong, 11 weak (one new: a 38-word sentence in the Recipes warning, kept).
+
+**How to run another Node line** (Git Bash): `npx -y -p node@20 node -p process.execPath` downloads it, but its `bin` folder also holds a text file named `node` ("This file intentionally left blank"), and Git Bash then skips the folder, so putting it first on PATH silently runs the system Node. Copy `node.exe` alone into a scratch folder and put that folder first on PATH; the script's `installed` line shows which Node ran. `wikiwright.py diffout` crashes printing C1 controls on a cp1252 console (`UnicodeEncodeError`); set `PYTHONIOENCODING=utf-8`.
 
 ## How the examples were verified
 

@@ -2,13 +2,19 @@
 // PUBLISHED package, never the working tree. The repository keeps this file as
 // ai-docs/notes/2026-09-28-wiki-verify.mjs so the next release can run it again.
 //
-// Run it from a scratch folder outside the repository:
+// Copy it into a scratch folder outside the repository and install there:
 //   npm init -y
 //   npm install get-title-at-url@3.0.0 typescript@6
-//   node wiki-verify.mjs > wiki-verify.out.txt
+//   node <scratch>/wiki-verify.mjs > wiki-verify.out.txt
+// It changes to its own folder, so no shell needs to cd first.
 //
 // Optional: V2=<folder with get-title-at-url@2.0.0 installed> and V1=<folder with 1.1.8>
 // add the Versions and upgrading cases for the old majors.
+//
+// Run it on the oldest Node line in engines too (20): put a folder holding only that
+// node.exe first on PATH, because the shell-loop case runs `node` from a spawned bash.
+// Updated 2026-09-29: the windows-1252 recipe cases (TextDecoderStream, and the plain
+// TextDecoder decode that is latin1 on Node 20.20.2 and 24.13.0).
 //
 // Every case prints "## <label>" and then its output. The package talks only to the
 // local fixture server below, never the internet.
@@ -19,6 +25,10 @@ import {createRequire} from 'node:module';
 import {readFileSync, writeFileSync} from 'node:fs';
 import path from 'node:path';
 import util from 'node:util';
+import {fileURLToPath} from 'node:url';
+
+// Everything runs in this file's folder, so no shell needs to change directory first.
+process.chdir(path.dirname(fileURLToPath(import.meta.url)));
 
 const PACKAGE = 'get-title-at-url';
 const VERSION = '3.0.0';
@@ -305,11 +315,6 @@ await capture('behaviour: redirect, final url', async () => getTitleAtUrl(`${bas
 await capture('behaviour: no content-type is read as HTML', async () => getTitleAtUrl(`${base}/no-content-type`));
 await capture('behaviour: xhtml', async () => getTitleAtUrl(`${base}/xhtml`));
 await capture('behaviour: windows-1252 header', async () => getTitleAtUrl(`${base}/windows-1252`));
-await capture('behaviour: windows-1252 header, clean false', async () => {
-	const response = await fetch(`${base}/windows-1252`);
-	const text = new TextDecoder('windows-1252').decode(await response.arrayBuffer());
-	return extractTitle(text, {clean: false});
-});
 await capture('behaviour: shift_jis meta', async () => getTitleAtUrl(`${base}/shift-jis-meta`));
 await capture('behaviour: utf-16 bom', async () => getTitleAtUrl(`${base}/utf16`));
 await capture('behaviour: og:title fallback', async () => getTitleAtUrl(`${base}/og-only`));
@@ -487,6 +492,34 @@ await capture('recipes: markdown link', async () => {
 await capture('recipes: keep the whole title', async () => {
 	const response = await fetch(`${base}/docs`);
 	return extractTitle(await response.text(), {clean: false});
+});
+
+// The Recipes code for a legacy encoding, as the page shows it (its //=> line is util.inspect).
+await capture('recipes: keep the whole title, windows-1252', async () => {
+	const response = await fetch(`${base}/windows-1252`);
+	let html = '';
+	for await (const chunk of response.body.pipeThrough(new TextDecoderStream('windows-1252'))) {
+		html += chunk;
+	}
+
+	return util.inspect(extractTitle(html, {clean: false}));
+});
+
+// The shorter decode the page warns about: on some Node lines TextDecoder's windows-1252 is
+// latin1 (bytes 0x80 to 0x9F become C1 controls). C1 controls are printed as <U+XXXX>.
+await capture('recipes: windows-1252, TextDecoder.decode compared', async () => {
+	const visible = text => [...text].map(c => {
+		const n = c.codePointAt(0);
+		return n >= 0x80 && n <= 0x9F ? `<U+${n.toString(16).toUpperCase().padStart(4, '0')}>` : c;
+	}).join('');
+	const bytes = new Uint8Array(await (await fetch(`${base}/windows-1252`)).arrayBuffer());
+	const decoded = new TextDecoder('windows-1252').decode(bytes);
+	const streamDecoder = new TextDecoder('windows-1252');
+	return [
+		`TextDecoder('windows-1252').decode: ${visible(extractTitle(decoded, {clean: false}))}`,
+		`same as Buffer latin1: ${decoded === Buffer.from(bytes).toString('latin1')}`,
+		`decode(bytes, {stream: true}): ${visible(extractTitle(streamDecoder.decode(bytes, {stream: true}) + streamDecoder.decode(), {clean: false}))}`,
+	].join('\n');
 });
 
 show('recipes: shell loop', await new Promise(resolve => {
