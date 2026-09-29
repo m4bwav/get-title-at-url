@@ -1,5 +1,5 @@
 ## installed
-get-title-at-url@3.0.0 on Node v24.18.0
+get-title-at-url@3.0.0 on Node v20.20.2
 
 ## esm exports
 [
@@ -861,8 +861,8 @@ Getting started | Acme Docs
 '“Curly” quotes – and € 5'
 
 ## recipes: windows-1252, TextDecoder.decode compared
-TextDecoder('windows-1252').decode: “Curly” quotes – and € 5
-same as Buffer latin1: false
+TextDecoder('windows-1252').decode: <U+0093>Curly<U+0094> quotes <U+0096> and <U+0080> 5
+same as Buffer latin1: true
 decode(bytes, {stream: true}): “Curly” quotes – and € 5
 
 ## recipes: shell loop
