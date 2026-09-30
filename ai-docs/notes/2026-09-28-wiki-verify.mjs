@@ -4,7 +4,7 @@
 //
 // Copy it into a scratch folder outside the repository and install there:
 //   npm init -y
-//   npm install get-title-at-url@3.0.0 typescript@6
+//   npm install get-title-at-url@3.0.0 typescript typescript6@npm:typescript@6
 //   node <scratch>/wiki-verify.mjs > wiki-verify.out.txt
 // It changes to its own folder, so no shell needs to cd first.
 //
@@ -19,6 +19,9 @@
 // forwards only to the fixture server. Install undici at its current latest and undici 7
 // beside the package: `npm install undici undici7@npm:undici@7` (without them those cases
 // print "(threw)"). The output names both undici versions and Node's own.
+// Updated 2026-09-30: TypeScript at its current latest (7.x since 2026-07-08) and 6 beside
+// it: `npm install typescript typescript6@npm:typescript@6`. The output names both
+// versions and compiles the narrowing file and Getting started's TypeScript block with each.
 //
 // Every case prints "## <label>" and then its output. The package talks only to the
 // local fixture server below, never the internet.
@@ -376,9 +379,26 @@ writeFileSync('narrow.mts', [
 	'console.log(maybe);',
 	'',
 ].join('\n'));
-await capture('typescript: tsc nodenext', async () => new Promise(resolve => {
-	const tsc = path.join(process.cwd(), 'node_modules', 'typescript', 'bin', 'tsc');
-	const child = spawn(process.execPath, [tsc, '--noEmit', '--strict', '--module', 'nodenext', '--moduleResolution', 'nodenext', '--target', 'es2022', '--skipLibCheck', 'false', 'narrow.mts']);
+// Getting started's TypeScript block, exactly as the page shows it.
+writeFileSync('getting-started.mts', [
+	"import getTitleAtUrl, {type GetTitleResult, type GetTitleErrorCode} from 'get-title-at-url';",
+	'',
+	"const result: GetTitleResult = await getTitleAtUrl('https://example.com/');",
+	'if (result.error) {',
+	'  const code: GetTitleErrorCode = result.error.code;',
+	'  const status: number | undefined = result.status;',
+	'  console.log(code, status);',
+	'} else {',
+	'  const title: string = result.title;',
+	'  const status: number = result.status;',
+	'  console.log(title, status);',
+	'}',
+	'',
+].join('\n'));
+// `typescript` is whatever `npm install typescript` gave (7.x since 2026-07-08); `typescript6` is npm:typescript@6.
+const tscRun = (pkgName, file) => new Promise(resolve => {
+	const tsc = path.join(process.cwd(), 'node_modules', pkgName, 'bin', 'tsc');
+	const child = spawn(process.execPath, [tsc, '--noEmit', '--strict', '--module', 'nodenext', '--moduleResolution', 'nodenext', '--target', 'es2022', '--skipLibCheck', 'false', file]);
 	let out = '';
 	child.stdout.on('data', c => {
 		out += c;
@@ -389,7 +409,20 @@ await capture('typescript: tsc nodenext', async () => new Promise(resolve => {
 	child.on('close', code => {
 		resolve(`exit ${code} ${out}`);
 	});
-}));
+});
+const tsVersion = pkgName => {
+	try {
+		return JSON.parse(readFileSync(path.join('node_modules', pkgName, 'package.json'), 'utf8')).version;
+	} catch {
+		return 'not installed';
+	}
+};
+
+show('typescript: versions', `typescript ${tsVersion('typescript')}, typescript6 ${tsVersion('typescript6')}`);
+await capture('typescript: tsc nodenext', async () => tscRun('typescript', 'narrow.mts'));
+await capture('typescript: tsc nodenext, typescript6', async () => tscRun('typescript6', 'narrow.mts'));
+await capture('typescript: getting started block, typescript', async () => tscRun('typescript', 'getting-started.mts'));
+await capture('typescript: getting started block, typescript6', async () => tscRun('typescript6', 'getting-started.mts'));
 
 // ===== Commands =====
 show('commands: --help', await cli('--help'));

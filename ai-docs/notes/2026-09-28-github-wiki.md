@@ -2,10 +2,10 @@
 title: GitHub wiki written and published for 3.0.0
 kind: note
 date: 2026-09-28
-verified: 2026-09-29
+verified: 2026-09-30
 stale_after: 2027-03-28
-tags: [wiki, docs, 3.0.0, github, wikiwright, node-20, windows-1252, undici, proxy]
-summary: "the nine wiki pages, where their git working copy is, how every example was verified against the published 3.0.0 on Node 24 and Node 20 (the script beside this note), the 2026-09-29 windows-1252 recipe fix (TextDecoder is latin1 on Node 20.20.2 and 24.13.0; TextDecoderStream is right on all four lines run), the third update (the proxy recipe broken by undici 8, now fetch from undici; the decoder claim scoped to the one-shot decode on 20.18.3+, 22.13.0 to 22.22.0 and 24.0.0 to 24.13.0), the facts the README lacks, five inaccuracies in the shipped README and CHANGELOG, and how to update the wiki at the next release; read before touching the wiki, the README's NOT_HTML row or site-name paragraph, or the CHANGELOG's exit-code line"
+tags: [wiki, docs, 3.0.0, github, wikiwright, node-20, windows-1252, undici, proxy, typescript-7]
+summary: "the nine wiki pages, where their git working copy is, how every example was verified against the published 3.0.0 on Node 24 and Node 20 (the script beside this note), the 2026-09-29 windows-1252 recipe fix (TextDecoder is latin1 on Node 20.20.2 and 24.13.0; TextDecoderStream is right on all four lines run), the third update (the proxy recipe broken by undici 8, now fetch from undici; the decoder claim scoped to the one-shot decode on 20.18.3+, 22.13.0 to 22.22.0 and 24.0.0 to 24.13.0), the fourth update (the pages named TypeScript 6 after 7 became latest; the example compiles under 7.0.2 and 6.0.3), the facts the README lacks, five inaccuracies in the shipped README and CHANGELOG, and how to update the wiki at the next release; read before touching the wiki, the README's NOT_HTML row or site-name paragraph, or the CHANGELOG's exit-code line"
 ---
 
 # GitHub wiki for 3.0.0
@@ -27,7 +27,7 @@ The wiki feature had been switched on earlier the same day (`gh repo edit --enab
 ## Updating the wiki later
 
 1. `git -C D:\m4bwa\Claude\Projects\Ai\get-title-at-url.wiki pull --ff-only`, then edit the pages.
-2. Re-verify: copy `2026-09-28-wiki-verify.mjs` to a scratch folder outside the repository, set `VERSION` in it, `npm init -y`, `npm install get-title-at-url@<new> typescript@6 undici undici7@npm:undici@7` (undici unpinned, at its current latest: the proxy recipe depends on it, see "third update" below), then run it with `V2=<folder>` and `V1=<folder>` pointing at scratch folders holding `get-title-at-url@2.0.0` and `@1.1.8` (without them the Versions page's old-major outputs are missing), and save its stdout as `out.txt`. Run it again on the oldest Node line in `engines` (20 for 3.x) and compare with `2026-09-28-wiki-verify.node20.out.txt` (how: "Updated 2026-09-29" below). Outputs name the fixture as `http://127.0.0.1:<port>`; the pages show it as `https://example.com/` (Home says so).
+2. Re-verify: copy `2026-09-28-wiki-verify.mjs` to a scratch folder outside the repository, set `VERSION` in it, `npm init -y`, `npm install get-title-at-url@<new> typescript typescript6@npm:typescript@6 undici undici7@npm:undici@7` (typescript and undici unpinned, at their current latest: the Getting started TypeScript claim and the proxy recipe depend on them, see "third update" and "fourth update" below; the output's `typescript: versions` line names both TypeScript versions), then run it with `V2=<folder>` and `V1=<folder>` pointing at scratch folders holding `get-title-at-url@2.0.0` and `@1.1.8` (without them the Versions page's old-major outputs are missing), and save its stdout as `out.txt`. Run it again on the oldest Node line in `engines` (20 for 3.x) and compare with `2026-09-28-wiki-verify.node20.out.txt` (how: "Updated 2026-09-29" below). Outputs name the fixture as `http://127.0.0.1:<port>`; the pages show it as `https://example.com/` (Home says so).
 3. Compare mechanically, not by eye: `python <wikiwright>/scripts/wikiwright.py outputs <wiki dir> out.txt` lists every output block and `//=>` value on a page that the run did not print (it maps the fixture address to `https://example.com` and ignores the port). Then diff `out.txt` with `2026-09-28-wiki-verify.out.txt` beside this note, after replacing `127.0.0.1:<digits>` with `127.0.0.1:<port>`: every difference is a behaviour change to put on the pages. Save the new output over it with the ports replaced.
 4. `python <wikiwright>/scripts/wikiwright.py check <wiki dir> --version <new>` and the everwrite checker.
 5. Commit, `git push`, `wikiwright.py live m4bwav/get-title-at-url <wiki dir>`.
@@ -73,6 +73,25 @@ Update mode again for the unchanged 3.0.0, fixing two wrong claims (wikiwright L
 - Page form: 24.18.0 and 22.23.3 with undici 8.11.2 `{ title: 'Example Domain', ... status: 200 }`, proxy saw `GET http://<fixture>/`; undici 7.30.0 the same on all three lines, proxy saw `CONNECT <fixture>`. Old form: undici 8 `NETWORK_ERROR` on 22 and 24; undici 7 works on 20, 22 and 24.
 - Saved both outputs through `diffout --save`. `outputs` with both: 35 checked, 0 missing, 1 skipped. `check --version 3.0.0`: 0 errors, 0 warnings. `live`: 9 pages, 0 failures, sidebar and footer rendered; the new text is on the live pages. Everwrite: 0 strong, 10 weak (two new long sentences were split).
 
+## Updated 2026-09-30 (fourth update): TypeScript 7
+
+Update mode for the unchanged 3.0.0, for a tool drift (wikiwright L-131 `recipe-deps-drift`): Getting started said the TypeScript block "compiles with no errors under TypeScript 6", and Development's install line was `typescript@6`, while `npm install typescript` has given 7.x since 2026-07-08 (found by wikiwright's eval run T-20260929-4, which compiled the example under 7.0.2). Wiki commit `a020db1` (on `1e449b2`), not pushed.
+
+**Runs** (scratch `%TEMP%/ww9/gt`, npm 11.16.0, `get-title-at-url@3.0.0`, `typescript` latest = 7.0.2 with its native Windows x64 binary package 7.0.2 (an optional dependency), `typescript6@npm:typescript@6` = 6.0.3, undici 8.11.2, undici7 7.30.0; 2.0.0 and 1.1.8 in their own folders; Node 24.18.0, 22.23.3 and 20.20.2):
+
+- The saved script unchanged, with TypeScript 7.0.2 as `typescript`: `diffout` against the saved outputs 121 sections, 121 same on Node 24.18.0 and on 20.20.2 (`typescript: tsc nodenext` printed `exit 0` under 7.0.2 exactly as under 6.0.3). The drift was invisible to the diff because the script never printed the TypeScript version; only the pages named it.
+- Script changes: a `typescript: versions` line (`typescript 7.0.2, typescript6 6.0.3`), the narrowing file compiled with `typescript6` too, and Getting started's TypeScript block written out exactly as the page shows it (`getting-started.mts`) and compiled with both. All four compile cases printed `exit 0` on 24.18.0, 22.23.3 and 20.20.2.
+- `diffout` of the new output against the saved: 125 sections, 121 same, 4 added (the new TypeScript cases), on Node 24.18.0 and 20.20.2; both saved through `diffout --save`. Node 22.23.3 against the new Node 24 output: 123 of 125 same (`installed`, Node's own undici); not saved.
+- Side probe (not in the script): a file assigning `result.title` (`string | undefined`) to `string` fails under both with TS2322; tsc 7.0.2 exits 1, tsc 6.0.3 exits 2. So `exit 0` is a real pass under 7, not a silent no-op.
+
+**Page changes.** Getting started: "This file compiles with no errors with `--strict --module nodenext --moduleResolution nodenext`. On 2026-09-30 it did so under TypeScript 7.0.2 (what `npm install typescript` gave) and TypeScript 6.0.3, on Node 20.20.2, 22.23.3 and 24.18.0." Development: the install line is now `npm install get-title-at-url@3.0.0 typescript typescript6@npm:typescript@6 undici undici7@npm:undici@7` (it had also lacked the undici packages the third update added to the script), followed by "`typescript` and `undici` install their current releases: TypeScript 7.0.2 and undici 8.11.2 on 2026-09-30. The aliases put TypeScript 6 and undici 7 beside them, so the script runs the TypeScript examples and the proxy recipe with both majors." Footer date 2026-09-30.
+
+**Checks.** `check --version 3.0.0`: 9 pages, 0 errors, 0 warnings. `outputs` with both saved outputs: 35 checked, 0 missing, 1 skipped. Everwrite on the three changed pages: 0 strong, 5 weak (all in older text; two new long sentences were split). `live` not run: the wiki commit is not pushed.
+
+**Pages that name a tool version** (check these at every update, alongside the pages that name the package version): Getting started (TypeScript), Development (the install line and the sentence after it), Recipes (undici, Node's own undici).
+
+The repository itself still builds with TypeScript `~6.0.3` (xo 5 and typescript-eslint need TypeScript below 6.1; HANDOFF Stage 4 item 1). That is the maintainer's toolchain, not what a consumer compiles with, so the pages do not mention it.
+
 ## How the examples were verified
 
 Scratch project in the session scratchpad: `npm install get-title-at-url@3.0.0 typescript@6` (npm 11.16, Node 24.18.0, Windows 11). The script imports the package both ways, runs the published bin with `node` (asynchronously: `spawnSync` would block the in-process fixture server), compiles a TypeScript narrowing example with `tsc --strict --module nodenext`, runs a bash loop over the bin, and runs 2.0.0 and 1.1.8 from their own scratch installs. `npx get-title-at-url --version` printed `3.0.0`; an empty project's `npm install get-title-at-url@3.0.0` printed "added 1 package". The repository's own `npm test` passed 186 of 186.
@@ -112,5 +131,6 @@ Worth adding at the next README change (omissions, not errors): the spaced-dash 
 - The verification script printed arrays as JSON; the Recipes page shows `console.log` output, which Node breaks over lines differently. Print in the form the page shows.
 - A Python string in a Bash heredoc turned `\n` into a real newline inside the generated JavaScript (wikiwright L-001).
 - The xo config ignores `ai-docs/**`, so the verification script does not affect `npm run lint`.
+- In Git Bash, a `PATH` entry written `C:/...` is split at the drive colon, so `PATH="C:/.../node20:$PATH" node` silently runs the system Node. Write it `/c/Users/...` (2026-09-30; the `installed` line showed Node 24 where 20 was meant).
 
 Related: see also [../HANDOFF.md](../HANDOFF.md), [../log.md](../log.md); the sibling wiki notes of 2026-09-28 in the m4bwav/DotNetJsonPrettyPrinter and m4bwav/DotNetRandomNameGenerator repositories (ai-docs, notes folder).
