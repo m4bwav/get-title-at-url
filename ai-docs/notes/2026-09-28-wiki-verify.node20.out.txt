@@ -552,7 +552,19 @@ Accept: text/html,application/xhtml+xml;q=0.9,*/*;q=0.1
 ## extract: unclosed title
 "<undefined>"
 
+## typescript: versions
+typescript 7.0.2, typescript6 6.0.3
+
 ## typescript: tsc nodenext
+exit 0
+
+## typescript: tsc nodenext, typescript6
+exit 0
+
+## typescript: getting started block, typescript
+exit 0
+
+## typescript: getting started block, typescript6
 exit 0
 
 ## commands: --help
