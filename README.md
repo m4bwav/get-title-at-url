@@ -1,5 +1,7 @@
 # get-title-at-url
 
+![A young explorer with a brass spyglass sitting on a hill under a large blank banner, glowing roads winding toward a distant house at dusk](https://raw.githubusercontent.com/m4bwav/get-title-at-url/master/.github/images/banner.jpg)
+
 [![npm version](https://img.shields.io/npm/v/get-title-at-url)](https://www.npmjs.com/package/get-title-at-url)
 [![CI](https://github.com/m4bwav/get-title-at-url/actions/workflows/ci.yml/badge.svg)](https://github.com/m4bwav/get-title-at-url/actions/workflows/ci.yml)
 [![npm downloads](https://img.shields.io/npm/dm/get-title-at-url)](https://www.npmjs.com/package/get-title-at-url)
