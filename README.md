@@ -191,6 +191,10 @@ It prints the title and exits `0`. When it cannot get one it prints `error: <mes
 
 Everything that changed is in the [changelog](CHANGELOG.md).
 
+## Package page
+
+- npm: [get-title-at-url](https://www.npmjs.com/package/get-title-at-url)
+
 ## License
 
 MIT © [Mark Rogers](https://www.markdavidrogers.com)
