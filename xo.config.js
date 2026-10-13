@@ -26,6 +26,8 @@ const xoConfig = [
       'package-json/prefer-shorthand': 'off',
       // Deliberate pins: tsdown is pre-1.0 and pinned exactly; TypeScript stays on 6.0 until tsdown and xo declare 7.
       'package-json/dependency-version-range': 'off',
+      // The overrides only patch this repository's dev tooling (katex under xo, GHSA-238p-pmpm-9mq7); consumers install no dev dependencies, so npm ignoring them there is the point.
+      'package-json/no-overrides-in-published-package': 'off',
     },
   },
   {
