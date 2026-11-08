@@ -1,0 +1,9 @@
+{
+  "name": "@m4bwav/get-title-at-url",
+  "version": "3.0.0",
+  "license": "MIT",
+  "exports": "./src/index.ts",
+  "publish": {
+    "include": ["src/index.ts", "src/errors.ts", "src/extract-title.ts", "README.md", "LICENSE", "CHANGELOG.md"]
+  }
+}
