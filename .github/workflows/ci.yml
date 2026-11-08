@@ -144,10 +144,24 @@ jobs:
         env:
           CONSUMER_RUNTIMES: deno
 
+  jsr:
+    name: jsr dry run (slow types, file list)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: 24
+          package-manager-cache: false
+      - run: npx --yes jsr@0.14.3 publish --dry-run
+
   ci:
     name: ci
     if: ${{ always() }}
-    needs: [lint, package, test, bun, deno]
+    needs: [lint, package, test, bun, deno, jsr]
     runs-on: ubuntu-24.04
     timeout-minutes: 5
     steps:
